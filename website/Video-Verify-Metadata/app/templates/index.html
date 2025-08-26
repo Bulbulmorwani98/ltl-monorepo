@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>MetaImage Uploader</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="assets/img/LTL-256.jpg" rel="icon">
+
+  <style>
+    /* Center the message and adjust font size and color */
+    .subscription-message {
+      text-align: center;
+      font-size: 1.8rem;
+      /* Slightly bigger font */
+      color: #ff5733;
+      /* Custom text color */
+      font-weight: bold;
+      margin-bottom: 10px;
+      /* Reduce space below text */
+    }
+
+    /* Style the container */
+    .subscription-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+      background-color: #f8f9fa;
+      /* Light background for contrast */
+      border-radius: 12px;
+      /* Soft rounded corners */
+      width: 50%;
+      /* Adjust width */
+      margin: auto;
+      /* Center horizontally */
+      box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+      /* Soft shadow */
+      margin-bottom: 40px;
+    }
+
+    /* Redesigned Button */
+    .btn-subscription {
+      background-color: #74a3cb;
+      /* Bright color for attention */
+      color: white;
+      padding: 14px 28px;
+      border: 2px solid transparent;
+      border-radius: 30px;
+      /* Fully rounded button */
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
+      /* Soft shadow */
+      transition: all 0.3s ease-in-out;
+      margin-top: 5px;
+      /* Bring button closer to text */
+    }
+
+    /* Hover effect */
+    .btn-subscription:hover {
+      border-color: var(--accent-color);
+      background-color: transparent;
+      color: var(--accent-color);
+    }
+
+    /* Overlay to disable the page */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+      z-index: 9998; /* Slightly below the loader */
+    }
+
+    /* Loader container */
+    .loader {
+      width: 300px;
+      padding: 20px;
+      background-color: #f1f1f1;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999; /* Ensure it's on top */
+    }
+
+    /* Message inside the loader */
+    .loader-message {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    /* Loader bar */
+    .loader-bar {
+      width: 100%;
+      height: 20px;
+      background-color: #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    /* Inner loader bar animation */
+    .loader-bar-inner {
+      height: 100%;
+      width: 0%;
+      background-color: #4d8ac2;
+      transition: width 0.3s ease;
+    }
+
+    @keyframes progress {
+      0% { width: 0; }
+      100% { width: 100%; }
+    }
+    .custom-alert {
+    display: none; /* Hidden initially */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* Semi-transparent background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+
+    .custom-alert-content {
+        background: #ffffff; /* White modal */
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        max-width: 400px;
+        width: 90%;
+        position: relative;
+        overflow: hidden;
+        border: 4px solid transparent; /* Ensures border area exists */
+        animation: glowing-border 2s linear infinite;
+    }
+
+    /* Keyframes for animated border */
+    @keyframes glowing-border {
+        0% { border-color: #007BFF; }
+        25% { border-color: #00D4FF; }
+        50% { border-color: #007BFF; }
+        75% { border-color: #00D4FF; }
+        100% { border-color: #007BFF; }
+    }
+
+    .custom-alert-content p {
+        color: #002855; /* Dark blue text */
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .custom-alert-content button {
+        background: #007BFF; /* Blue button */
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 14px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        margin-top: 10px;
+    }
+
+    .custom-alert-content button:hover {
+        background: #0056b3; /* Darker blue on hover */
+    }
+
+
+
+
+
+
+  </style>
+
+  <!-- Favicons -->
+  <!-- <link href="assets/img/favicon.png" rel="icon">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon"> -->
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+
+  <!-- =======================================================
+    * Template Name: Active
+    * Template URL: https://bootstrapmade.com/active-bootstrap-website-template/
+    * Updated: Aug 07 2024 with Bootstrap v5.3.3
+    * Author: BootstrapMade.com
+    * License: https://bootstrapmade.com/license/
+    ======================================================== -->
+
+</head>
+
+<body class="index-page">
+  {% include 'header.html' %}
+
+  <div class="body-wrapper">
+    <main class="main">
+
+      <div class="container">
+        <div class="about">
+          <div class="row">
+            <div class="col-12 text-center mb-5 pb-5 pt-5">
+              <h1 class="aos-init aos-animate" data-aos="fade-up">Welcome to Long Tailed Leopard's first
+                project.
+              </h1>
+              <p>This page will mark an image or video with meta data that will help identify the creator and the rights
+                of
+                the file.</p>
+              <a href="#" class="btn btn-get-started" target="_blank">Visit our website</a>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-7 mb-3 py-4">
+              <h5 class="aos-init aos-animate mb-4" data-aos="fade-up">Metadata Management and File Upload System:
+                Features and
+                Updates
+              </h5>
+
+              <div class="content">
+                <p>By default, it also indicates that it shouldn't be shared for use with any AI training.</p>
+                <p>To start, first store the default values that you wants to add to the image or video files.</p>
+                <p>Select one or more image or video files. Click 'Use Default Values' to auto fill the form, 
+                  then click 'Upload' when you're ready.</p>
+                <p>The file will be uploaded to the server and the metadata will be added to it. After processing, the
+                  file will be available for download with the metadata.</p>
+                To view the metadata that has been added to it, I suggest using <a
+                  href="https://hintfo.com/metadata.php" target="_blank">this</a> webpage.
+              </div>
+            </div>
+            <div class="col-md-5 mb-4">
+              <img src="assets/img/Digital-Head.jpg" alt="" class="img-fluid w-100 rounded" />
+            </div>
+          </div>
+
+          {% if subscription %}
+          <div class="row">
+            <div class="col-12">
+              <div class="content">
+                <div class="d-flex justify-content-between mt-5 mb-4">
+                  <form action="/configuration_details" method="get">
+                    <button class="btn btn-get-started" type="button" onclick="window.location.href='/configuration_details'">
+                      Store Default Values
+                    </button>
+                  </form>
+                  <button class="btn btn-get-started" onclick="populateDefaultValues()" type="button">
+                    Use Default Values
+                  </button>
+                </div>
+                <form class="row creator-form mb-4" action="/upload" method="POST" enctype="multipart/form-data">
+                  <div class="position-relative mb-4">
+                    <div class="text-left mb-4">
+                      <div class="custom-file-upload">
+                        <p class="mb-0">Upload files to further process</p>
+                        <button type="button" class="btn btn-get-started" onclick="document.getElementById('fileInput').click()">
+                          Select Files
+                        </button>
+                        <div id="fileName" class="file-name file-list-names"></div>
+                        <!-- File names will be displayed here -->
+                        <input type="file" id="fileInput" name="files" multiple accept="*" onchange="showFileNames()"
+                          style="display: none;">
+                      </div>
+                    </div>
+
+                    <div class="col-md-12">
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>File Creator Name</label>
+                            <input type="text"
+                                placeholder="Creator Name"
+                                id="creatorName"
+                                name="creatorName"
+                                class="form-control"
+                                required
+                                pattern="[A-Za-z\s]+"
+                                title="Only letters and spaces allowed"
+                                oninvalid="this.setCustomValidity('Please enter only letters and spaces.')"
+                                oninput="this.setCustomValidity('')" />
+                            <small id="creatorNameError" class="text-danger d-none">Please enter only letters and spaces.</small>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Creator's Address</label>
+                            <input type="text" placeholder="Address" id="creatorAddress" name="creatorAddress"
+                              class="form-control" />
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>City of the Creator</label>
+                            <input type="text"
+                                  placeholder="City"
+                                  id="creatorCity"
+                                  name="creatorCity"
+                                  class="form-control"
+                                  pattern="[A-Za-z\s]+"
+                                  title="Only letters and spaces allowed"
+                                  oninvalid="this.setCustomValidity('Please enter only letters and spaces.')"
+                                  oninput="this.setCustomValidity('')" />
+                              <small id="creatorCityError" class="text-danger d-none">Please enter only letters and spaces.</small>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>State of the Creator</label>
+                            <input type="text"
+                                    placeholder="State"
+                                    id="creatorState"
+                                    name="creatorState"
+                                    class="form-control"
+                                    pattern="[A-Za-z\s]+"
+                                    title="Only letters and spaces allowed"
+                                    oninvalid="this.setCustomValidity('Please enter only letters and spaces.')"
+                                    oninput="this.setCustomValidity('')" />
+                              <small id="creatorStateError" class="text-danger d-none">Please enter only letters and spaces.</small>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Country of the Creator</label>
+                            <input type="text"
+                                      placeholder="Country"
+                                      id="creatorCountry"
+                                      name="creatorCountry"
+                                      class="form-control"
+                                      pattern="[A-Za-z\s]+"
+                                      title="Only letters and spaces allowed"
+                                      oninvalid="this.setCustomValidity('Please enter only letters and spaces.')"
+                                      oninput="this.setCustomValidity('')" />
+                              <small id="creatorCountryError" class="text-danger d-none">Please enter only letters and spaces.</small>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Postal code of the Creator</label>
+                            <input type="text"
+                                  placeholder="Postal code"
+                                  id="creatorPostalCode"
+                                  name="creatorPostalCode"
+                                  class="form-control"
+                                  pattern="[A-Za-z0-9]+"
+                                  title="Only letters and digits allowed"
+                                  oninvalid="document.getElementById('postalCodeError').classList.remove('d-none')"
+                                  oninput="document.getElementById('postalCodeError').classList.add('d-none')" />
+                            <small id="postalCodeError" class="text-danger d-none">
+                              Please enter letters and/or digits only.
+                            </small>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Email of the Creator</label>
+                            <input type="email"
+                                   placeholder="Email"
+                                   id="creatorEmail"
+                                   name="creatorEmail"
+                                   class="form-control"
+                                   required
+                                   pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                                   title="Enter a valid email like user@example.com"
+                                   oninput="this.setCustomValidity('')"
+                                   oninvalid="showEmailError()" />
+                            <!-- Error message -->
+                            <small id="emailError" class="text-danger d-none">Please enter a valid email address.</small>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Phone number of the Creator</label>
+                            <input type="text"
+                                  placeholder="Phone number"
+                                  id="creatorPhone"
+                                  name="creatorPhone"
+                                  class="form-control"
+                                  pattern="^$|^None$|^(\+?\d{1,3}[\s-]?)?(\(?\d{2,4}\)?[\s-]?)?(\d{3,4}[\s-]?){1,3}$"
+                                  title="Please enter a valid 10-digit phone number"
+                                  oninvalid="document.getElementById('phoneError').classList.remove('d-none')"
+                                  oninput="document.getElementById('phoneError').classList.add('d-none')" />
+                            <small id="phoneError" class="text-danger d-none">
+                              Please enter a valid 10-digit phone number.
+                            </small>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Web URL of the Creator</label>
+                            <input type="text"
+                                   placeholder="Web URL"
+                                   id="creatorWebUrl"
+                                   name="creatorWebUrl"
+                                   class="form-control"
+                                   pattern="^$|https?://(?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,6}(?:/[\w.-]*)*$"
+                                   title="Please enter a valid URL, like http://www.example.com"
+                                   oninvalid="document.getElementById('urlError').classList.remove('d-none')"
+                                   oninput="document.getElementById('urlError').classList.add('d-none')" />
+                            <small id="urlError" class="text-danger d-none">Please enter a valid URL, like http://www.example.com</small>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Job title of the Creator</label>
+                            <input type="text"
+                                  placeholder="Job Title"
+                                  id="creatorsJobtitle"
+                                  name="creatorsJobtitle"
+                                  class="form-control"
+                                  pattern="[A-Za-z\s]+"
+                                  title="Only alphabets and spaces allowed"
+                                  oninvalid="this.setCustomValidity('Please enter only alphabets and spaces.')"
+                                  oninput="this.setCustomValidity('')" />
+                            <small id="creatorJobTitleError" class="text-danger d-none">Please enter only letters and spaces.</small>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Credit line</label>
+                            <input type="text"
+                                  placeholder="Credit line"
+                                  id="creditLine"
+                                  name="creditLine"
+                                  class="form-control"
+                                  title="Enter credit line"
+                                  oninput="this.setCustomValidity('')" />
+                            <small id="creditLineError" class="text-danger d-none">Please enter credit line.</small>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Date created</label>
+                            <input type="date" placeholder="Date Created" id="dateCreated" name="dateCreated"
+                              class="form-control" required/>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Copyright Notice for the file</label>
+                            <input type="text" placeholder="Copyright Notice" id="copyrightNotice"
+                              name="copyrightNotice" class="form-control" required/>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Description of the writer</label>
+                            <input type="text"
+                                  placeholder="Description of the writer"
+                                  id="descriptionWriter"
+                                  name="descriptionWriter"
+                                  class="form-control"
+                                  title="Enter description writer"
+                                  oninput="this.setCustomValidity('')" />
+                            <small id="descriptionWriterError" class="text-danger d-none">Please enter description writer.</small>
+                          </div>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Headline</label>
+                            <input type="text"
+                                  placeholder="Headline"
+                                  id="headline"
+                                  name="headline"
+                                  class="form-control"
+                                  title="Enter headline"
+                                  oninput="this.setCustomValidity('')" />
+                            <small id="headlineError" class="text-danger d-none">Please enter headline.</small>
+                          </div>
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Rights usage terms</label>
+                            <textarea placeholder="Rights usage terms" id="rightsUsageTerms" name="rightsTerms"
+                              class="form-control" ></textarea>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Description</label>
+                            <textarea placeholder="Description"
+                                      id="description"
+                                      name="description"
+                                      class="form-control"
+                                      required
+                                      oninput="this.setCustomValidity('')"></textarea>
+                            <small id="descriptionError" class="text-danger d-none">Please enter description.</small>
+                          </div>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Instructions</label>
+                            <textarea placeholder="Instructions"
+                                      id="instructions"
+                                      name="instructions"
+                                      class="form-control"
+                                      oninput="this.setCustomValidity('')"></textarea>
+                            <small id="instructionsError" class="text-danger d-none">Please enter instructions.</small>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Keywords</label>
+                            <input type="text"
+                                  placeholder="Keywords"
+                                  id="keywords"
+                                  name="keywords"
+                                  class="form-control"
+                                  title="Enter keywords"
+                                  oninput="this.setCustomValidity('')" />
+                            <small id="keywordsError" class="text-danger d-none">Please enter keywords.</small>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Title</label>
+                            <input type="text"
+                                  placeholder="Title"
+                                  id="title"
+                                  name="title"
+                                  class="form-control"
+                                  required
+                                  title="Enter title"
+                                  oninput="this.setCustomValidity('')" />
+                            <small id="titleError" class="text-danger d-none">Please enter title.</small>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>AI Training</label>
+                            <select id="aiTraining" class="form-control" name="aiTraining" >
+                              <option value="" disabled selected>Select an option</option>
+                              <option value="allowed">Allowed</option>
+                              <option value="notAllowed">Not Allowed</option>
+                              <option value="constrained">Constrained</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>AI Generative Training</label>
+                            <select id="aiGenerativeTraining" name="aiGenerativeTraining" class="form-control" >
+                              <option value="" disabled selected>Select an option</option>
+                              <option value="allowed">Allowed</option>
+                              <option value="notAllowed">Not Allowed</option>
+                              <option value="constrained">Constrained</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>Data Mining</label>
+                            <select id="dataMining" name="dataMining" class="form-control" >
+                              <option value="" disabled selected>Select an option</option>
+                              <option value="allowed">Allowed</option>
+                              <option value="notAllowed">Not Allowed</option>
+                              <option value="constrained">Constrained</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                          <div class="form-group mb-0">
+                            <label>AI Inference</label>
+                            <select id="aiInference" name="aiInference" class="form-control" >
+                              <option value="" disabled selected>Select an option</option>
+                              <option value="allowed">Allowed</option>
+                              <option value="notAllowed">Not Allowed</option>
+                              <option value="constrained">Constrained</option>
+                            </select>
+                          </div>
+                        </div>
+
+
+                        <div class="col-md-12 mb-3 text-end">
+                          <button type="submit" id="uploadBtn" class="btn btn-site rounded-pill"
+                              style="min-width: 200px;" disabled>Upload</button>
+                          {% if download_link %}
+                          <a href="/user_gallery" class="btn btn-site rounded-pill" target="_blank">Open Gallery</a>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <div class="subscription-container">
+            <p class="subscription-message">
+              If you want to use our services, please buy a subscription.
+            </p>
+            <a href="/subscription_purchase" class="btn-subscription">Buy Subscription</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </main>
+    {% include 'footer.html' %}
+
+
+  </div>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Overlay -->
+  <div id="duplicateFileOverlay"></div>
+
+  <!-- Duplicate File Popup -->
+  <div id="duplicateFilePopup">
+      <p id="duplicateFileMessage"></p>
+      <div class="modal-buttons">
+          <button id="keepFile">Keep</button>
+          <button id="removeFile">Remove</button>
+      </div>
+  </div>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/footer-bot.js"></script>
+
+  <script>
+    const defaultValues = {
+      creatorName: "{{ meta_info.get('creator_name', '') }}",
+      creatorAddress: "{{ meta_info.get('creator_address', '') }}",
+      creatorCity: "{{ meta_info.get('creator_city', '') }}",
+      creatorState: "{{ meta_info.get('creator_state', '') }}",
+      creatorCountry: "{{ meta_info.get('creator_country', '') }}",
+      creatorPostalCode: "{{ meta_info.get('creator_postal_code', '') }}",
+      creatorEmail: "{{ meta_info.get('creator_email', '') }}",
+      creatorPhone: "{{ meta_info.get('creator_phone', '') }}",
+      creatorWebUrl: "{{ meta_info.get('creator_web_url', '') }}",
+      creatorsJobtitle: "{{ meta_info.get('creators_jobtitle', '') }}",
+      creditLine: "{{ meta_info.get('credit_line', '') }}",
+      dateCreated: "{{ meta_info.get('date_created', '') }}",
+      copyrightNotice: "{{ meta_info.get('copyright_notice', '') }}",
+      rightsUsageTerms: "{{ meta_info.get('rights_usage_terms', '') }}",
+      description: "{{ meta_info.get('description', '') }}",
+      descriptionWriter: "{{ meta_info.get('description_writer', '') }}",
+      headline: "{{ meta_info.get('headline', '') }}",
+      instructions: "{{ meta_info.get('instructions', '') }}",
+      keywords: "{{ meta_info.get('keywords', '') }}",
+      title: "{{ meta_info.get('title', '') }}",
+      aiTraining: "{{ meta_info.get('ai_training', '') }}",
+      aiGenerativeTraining: "{{ meta_info.get('ai_generative_training', '') }}",
+      dataMining: "{{ meta_info.get('data_mining', '') }}",
+      aiInference: "{{ meta_info.get('ai_inference', '') }}"
+    };
+  
+    // Fetch user-specific media list on page load
+    let mediaList = new Set();
+  
+    function fetchUserFiles() {
+      fetch('/get_user_files')
+        .then(response => response.json())
+        .then(data => {
+          mediaList = new Set(data);  // Store files from backend in mediaList
+          console.log("User-specific mediaList:", mediaList);
+        })
+        .catch(error => {
+          console.error('Error fetching user files:', error);
+        });
+    }
+  
+    function populateDefaultValues() {
+      const isEmpty = Object.values(defaultValues).every(value => value === "");
+  
+      if (isEmpty) {
+        document.getElementById("customAlert").style.display = "flex";
+        return;
+      }
+  
+      for (const [key, value] of Object.entries(defaultValues)) {
+        const field = document.getElementById(key);
+        if (field) {
+          if (field.tagName === 'INPUT' || field.tagName === 'TEXTAREA' || field.tagName === 'SELECT') {
+            field.value = (value === null || value === "None") ? "" : value;
+          }
+        }
+      }
+    }
+  
+    function closeCustomAlert() {
+      document.getElementById("customAlert").style.display = "none";
+    }
+  
+    document.addEventListener("DOMContentLoaded", function () {
+      fetchUserFiles();  // Fetch media list after page loads
+      document.getElementById("customAlert").style.display = "none";
+    });
+  
+    function showFileNames() {
+      const input = document.getElementById('fileInput');
+      const fileNameDisplay = document.getElementById('fileName');
+      const uploadBtn = document.getElementById('uploadBtn');
+      const maxSize = 40 * 1024 * 1024;
+      const allowedFormats = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'mp4', 'avi', 'mov', 'wmv', 'mkv', 'flv'];
+  
+      fileNameDisplay.innerHTML = '';
+      let newFileList = [];
+      let duplicateFiles = [];
+  
+      const dataTransfer = new DataTransfer();
+  
+      for (const file of input.files) {
+        const fileName = file.name;
+        const fileExtension = fileName.split('.').pop().toLowerCase();
+  
+        console.log("Checking File:", fileName);
+  
+        if (mediaList.has(fileName)) {
+          duplicateFiles.push(file);
+          continue;
+        }
+  
+        if (!allowedFormats.includes(fileExtension)) {
+          showFileAlert(`🚫 The file "${fileName}" is not a valid image or video format.`);
+          continue;
+        }
+  
+        if (file.size > maxSize) {
+          showFileAlert(`🚫 The file "${fileName}" exceeds the 40MB limit.`);
+          continue;
+        }
+  
+        newFileList.push(file);
+        dataTransfer.items.add(file);
+        fileNameDisplay.innerHTML += `<div>${fileName}</div>`;
+      }
+  
+      processDuplicateFiles(duplicateFiles, newFileList, dataTransfer, () => {
+        input.files = dataTransfer.files;
+        uploadBtn.disabled = dataTransfer.files.length === 0;
+        updateFileDisplay(newFileList);
+      });
+    }
+  
+    function showFileAlert(message) {
+      document.getElementById("fileAlertMessage").innerText = message;
+      document.getElementById("fileAlert").style.display = "block";
+      document.getElementById("fileAlertOverlay").style.display = "block";
+    }
+  
+    function closeFileAlert() {
+      document.getElementById("fileAlert").style.display = "none";
+      document.getElementById("fileAlertOverlay").style.display = "none";
+    }
+  
+    function processDuplicateFiles(duplicateFiles, newFileList, dataTransfer, onComplete) {
+      if (duplicateFiles.length === 0) {
+        onComplete();
+        return;
+      }
+  
+      const file = duplicateFiles.shift();
+      showDuplicateFilePopup(file.name,
+        () => {
+          newFileList.push(file);
+          dataTransfer.items.add(file);
+          processDuplicateFiles(duplicateFiles, newFileList, dataTransfer, onComplete);
+        },
+        () => {
+          processDuplicateFiles(duplicateFiles, newFileList, dataTransfer, onComplete);
+        }
+      );
+    }
+  
+    function updateFileDisplay(files) {
+      const fileNameDisplay = document.getElementById('fileName');
+      if (files.length > 0) {
+        const fileNamesHtml = files.map(file => `<span>${file.name}</span>`).join("<br>");
+        fileNameDisplay.innerHTML = `<strong>Selected Files:</strong><br>${fileNamesHtml}`;
+      } else {
+        fileNameDisplay.innerHTML = "";
+      }
+    }
+  
+    function showDuplicateFilePopup(fileName, onKeep, onRemove) {
+      document.getElementById("duplicateFileMessage").innerText =
+        `The file "${fileName}" already exists. Do you want to keep it or remove it?`;
+  
+      document.getElementById("duplicateFilePopup").style.display = "block";
+      document.getElementById("duplicateFileOverlay").style.display = "block";
+  
+      document.getElementById("keepFile").onclick = function () {
+        closeDuplicateFilePopup();
+        onKeep();
+      };
+  
+      document.getElementById("removeFile").onclick = function () {
+        closeDuplicateFilePopup();
+        onRemove();
+      };
+    }
+  
+    function closeDuplicateFilePopup() {
+      document.getElementById("duplicateFilePopup").style.display = "none";
+      document.getElementById("duplicateFileOverlay").style.display = "none";
+    }
+  
+    const uploadForm = document.querySelector("form.creator-form");
+    if (uploadForm) {
+      uploadForm.addEventListener("submit", function () {
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("page-overlay").style.display = "block";
+  
+        const loaderBar = document.getElementById("loader-bar-inner");
+        loaderBar.style.width = "0%";
+        loaderBar.style.animation = "progress 20s forwards";
+      });
+    }
+  </script>
+  
+  
+
+<!-- Main JavaScript File -->
+<script src="assets/js/validation.js"></script>
+
+<!-- Page Overlay (hidden by default) -->
+<div id="page-overlay" class="overlay" style="display: none;"></div>
+
+<!-- Loader Element -->
+<div id="loader" class="loader" style="display: none;">
+  <div class="loader-message">Processing...</div>
+  <div class="loader-bar">
+    <div id="loader-bar-inner" class="loader-bar-inner"></div>
+  </div>
+</div>
+
+<div id="customAlert" class="custom-alert">
+  <div class="custom-alert-content">
+      <p>No default values available. Please first add configuration details.</p>
+      <button onclick="closeCustomAlert()">OK</button>
+  </div>
+</div>
+
+<!-- Custom Stylish Alert -->
+<div id="fileAlertOverlay" class="file-alert-overlay"></div>
+<div id="fileAlert" class="file-alert">
+    <p id="fileAlertMessage"></p>
+    <button onclick="closeFileAlert()">OK</button>
+</div>
+
+</body>
+</html>

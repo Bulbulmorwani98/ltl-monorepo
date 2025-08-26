@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Contact Us</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="assets/img/LTL-256.jpg" rel="icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: Active
+  * Template URL: https://bootstrapmade.com/active-bootstrap-website-template/
+  * Updated: Aug 07 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+  <style>
+    .row {
+    display: flex;
+    align-items: stretch; /* Stretch both sides equally */
+  }
+
+  .col-lg-4, .col-lg-8 {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .info, .contactForm {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Important */
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+  }
+
+  textarea {
+    height: 175px;
+    resize: vertical;
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  button {
+    margin-top: 10px;
+  }
+ 
+  </style>
+</head>
+
+<body class="contact-page">
+  {% include 'header.html' %}
+  <main class="main">
+
+  <div class="body-wrapper">
+    <main class="main">
+
+      <!-- Contact Section -->
+      <section id="contact" class="contact section">
+
+        <div class="container" data-aos="fade">
+
+          <div class="row">
+
+            <div class="col-lg-4">
+
+              <div class="info">
+                <h3>Get in touch</h3>
+                <p>We'd love to hear from you! Whether you have a question, feedback, or anything to share feel free to reach out. Our team is here to help and will get back to you as soon as possible.
+                </p>
+
+                <div class="info-item d-flex">
+                  <i class="bi bi-envelope flex-shrink-0"></i>
+                  <div>
+                    <h4>Email:</h4>
+                    <p>customer_service@longtailedleopard.com</p>
+                  </div>
+                </div><!-- End Info Item -->
+              </div>
+
+            </div>
+
+            <div class="col-lg-8">
+              <form action="{{url_for('contact_us')}}" method="post" role="form" class="contactForm">
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required="">
+                  </div>
+                  <div class="col-md-6 form-group mt-3 mt-md-0">
+                    <input type="email" class="form-control" name="email" id="email" placeholder="Your Email"
+                      required="">
+                  </div>
+                </div>
+                <div class="form-group mt-3">
+                  <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" required="">
+                </div>
+                <div class="form-group mt-3">
+                  <textarea class="form-control" name="message" placeholder="Message" required=""></textarea>
+                </div>
+  
+                <div class="text-center"><button type="submit" class="btn btn-site">Send Message</button></div>
+              </form>
+            </div><!-- End Contact Form -->
+
+          </div>
+
+        </div>
+
+      </section><!-- /Contact Section -->
+
+    </main>
+    {% include 'footer.html' %}
+  </div>
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/footer-bot.js"></script>
+
+</body>
+
+</html>

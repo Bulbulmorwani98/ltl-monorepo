@@ -1,0 +1,186 @@
+<header id="header" class="header d-flex align-items-center sticky-top">
+  <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+    <nav id="navmenu" class="navmenu">
+      <ul>
+        {% if user %}
+          <li><a href="/metadata_modifier" class="{% if request.path == '/metadata_modifier' %}active{% endif %}">Home</a>
+          </li>
+          <li><a href="/user_gallery" class="{% if request.path == '/user_gallery' %}active{% endif %}">Gallery</a></li>
+          <li><a href="/image_status" class="{% if request.path == '/image_status' %}active{% endif %}">Image Status</a></li>
+          <li><a href="/subscription_purchase" class="{% if request.path == '/purchase' %}active{% endif %}">Buy
+            Subscription</a></li>
+          {% if user.email == admin_email %}
+              <li><a href="/admindashboard" class="{% if request.path == '/admindashboard' %}active{% endif %}">Admin</a></li>
+          {% endif %}
+        {% else %}
+          <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
+        {% endif %}
+        <li><a href="/blog" class="{% if request.path == '/blog' %}active{% endif %}" target="_blank">Blog</a></li>
+        <li><a href="/image_hub" class="{% if request.path == '/image_hub' %}active{% endif %}">Image Hub</a></li>
+        <li><a href="/contact" class="{% if request.path == '/contact' %}active{% endif %}">Contact</a></li>
+      </ul>
+      <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+    </nav>
+
+    {% if message %}
+    <p style="color: rgb(12, 9, 9);">{{ message }}</p>
+    {% endif %}
+
+    {% if user %}
+    <div class="dropdown" style="display: flex; align-items: center;">
+      <a href="#" class="dropdown-toggle" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+        style="display: flex; align-items: center; text-decoration: none;">
+        <p class="mb-0 me-2" style="color: black;">Hello, {{ user.email }}</p>
+        {% if profile_image %}
+          <img src="{{ profile_image }}" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+        {% else %}
+          <i class="fa fa-user-circle-o" aria-hidden="true" style="font-size: 24px; color: #007bff;"></i>
+        {% endif %}
+      </a>
+      <ul class="dropdown-menu">
+        <li>
+          <a class="dropdown-item d-flex gap-2 align-items-center" href="/subscription">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 468 468" width="16" height="16" style="min-width: 16px;">
+              <g fill="#333">
+                <path d="m89.801 278.87h-15.095c-6.627 0-12-5.373-12-12s5.373-12 12-12h15.095c6.627 0 12 5.373 12 12s-5.373 12-12 12z"/>
+                <path d="m248.303 218.187h-15.095c-6.627 0-12-5.373-12-12s5.373-12 12-12h15.095c6.627 0 12 5.373 12 12s-5.373 12-12 12z"/>
+                <path d="m327.554 218.187h-15.095c-6.627 0-12-5.373-12-12s5.373-12 12-12h15.095c6.627 0 12 5.373 12 12s-5.373 12-12 12z"/>
+                <path d="m169.052 218.187h-15.095c-6.627 0-12-5.373-12-12s5.373-12 12-12h15.095c6.627 0 12 5.373 12 12s-5.373 12-12 12z"/>
+                <path d="m169.052 339.554h-15.095c-6.627 0-12-5.373-12-12s5.373-12 12-12h15.095c6.627 0 12 5.373 12 12s-5.373 12-12 12z"/>
+                <path d="m89.801 339.554h-15.095c-6.627 0-12-5.373-12-12s5.373-12 12-12h15.095c6.627 0 12 5.373 12 12s-5.373 12-12 12z"/>
+                <circle cx="161.504" cy="265.859" r="20.228"/>
+                <path d="m343.736 219.472c-34.75 0-66.207 14.344-88.78 37.414-1.904-1.271-4.191-2.015-6.653-2.015h-15.095c-6.627 0-12 5.373-12 12s5.373 12 12 12h4.578c-11.61 18.894-18.315 41.11-18.315 64.865 0 68.52 55.745 124.265 124.264 124.265s124.265-55.746 124.265-124.266-55.745-124.263-124.264-124.263zm0 224.528c-55.286 0-100.264-44.979-100.264-100.265 0-55.285 44.979-100.264 100.264-100.264s100.264 44.979 100.264 100.264c0 55.286-44.979 100.265-100.264 100.265z"/>
+                <path d="m376.26 32.403h-31.65v-20.403c0-6.627-5.373-12-12-12s-12 5.373-12 12v20.403h-63.654v-20.403c0-6.627-5.373-12-12-12s-12 5.373-12 12v20.403h-63.654v-20.403c0-6.627-5.373-12-12-12s-12 5.373-12 12v20.403h-63.653v-20.403c0-6.627-5.373-12-12-12s-12 5.373-12 12v20.403h-31.649c-14.336 0-26 11.663-26 26v317.857c0 14.337 11.664 26 26 26h155.54c6.627 0 12-5.373 12-12s-5.373-12-12-12h-155.54c-1.103 0-2-.897-2-2v-233.074h354.26v28.354c0 6.627 5.373 12 12 12s12-5.373 12-12v-113.137c0-14.337-11.664-26-26-26z"/>
+                <circle cx="400.451" cy="356.891" r="14"/>
+                <path d="m385.827 290.789-11.397-24.307c-2.814-6.001-9.961-8.582-15.959-5.771-5.436 2.55-8.053 8.652-6.407 14.24-2.606-.31-5.236-.483-7.884-.483-38.134 0-69.158 32.238-69.158 71.864 0 6.627 5.373 12 12 12s12-5.373 12-12c0-26.37 20.224-47.826 45.095-47.862-5.468 9.698 4.689 21.282 15.046 16.977l20.407-8.482c6.101-2.538 9.09-10.133 6.257-16.176z"/>
+                <path d="m387.333 387.479c-4.02-5.27-11.55-6.281-16.819-2.263-7.703 5.876-16.81 8.982-26.335 8.982-4.66 0-9.244-.775-13.606-2.241 3.705-2.582 5.798-7.146 4.977-11.889-1.131-6.53-7.338-10.911-13.871-9.777l-22.364 3.871c-6.836 1.185-11.381 8.345-9.512 15.048l6.454 23.14c3.068 10.999 18.875 11.587 22.811.915 7.919 3.217 16.42 4.934 25.111 4.934 14.831 0 28.971-4.807 40.892-13.9 5.269-4.021 6.282-11.551 2.262-16.82z"/>
+              </g>
+            </svg>
+            Subscription
+          </a>
+        </li>
+
+          <li>
+            <a class="dropdown-item d-flex gap-2 align-items-center" href="/profile">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" style="min-width: 16px;">
+                <circle cx="12" cy="8" r="4" stroke="black" stroke-width="2" fill="none"/>
+                <path d="M4 20C4 16 8 14 12 14C16 14 20 16 20 20" stroke="black" stroke-width="2" fill="none"/>
+              </svg>
+              Profile
+            </a>
+          </li>
+
+          <li><a class="dropdown-item d-flex gap-2 align-items-center" href="/logout">
+
+            <svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="16" height="16" style="min-width: 16px;">
+              <path
+                d="M15,3.849h0a1.02,1.02,0,0,0,.629.926A9,9,0,0,1,21,13.292,9,9,0,0,1,3,13,9,9,0,0,1,8.371,4.776,1.023,1.023,0,0,0,9,3.848H9a1,1,0,0,0-1.374-.929,11,11,0,1,0,8.751,0A1,1,0,0,0,15,3.849Z" />
+              <rect x="11" width="2" height="8" rx="1" />
+            </svg>
+
+            Logout</a></li>
+
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Popup for error message -->
+  {% if error_msg %}
+  <div class="popup-container" id="popup-container">
+    <div class="popup error">
+      <span>{{ error_msg }}</span>
+      <button onclick="document.getElementById('popup-container').style.display='none'"
+        class="close-btn">&times;</button>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Popup for success message -->
+  {% if success_msg %}
+  <div class="popup-container" id="popup-container-success">
+    <div class="popup success">
+      <span>{{ success_msg }}</span>
+      <button onclick="document.getElementById('popup-container-success').style.display='none'" class="close-btn">&times;</button>
+    </div>
+  </div>
+  {% endif %}
+
+
+</header>
+
+<style>
+  .popup-container {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 500px;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  pointer-events: none; /* Prevent blocking interactions */
+}
+
+.popup {
+  color: #ffffff;
+  padding: 15px 25px;
+  border-radius: 5px;
+  text-align: center;
+  width: 100%;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  position: relative;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+  pointer-events: auto; /* Allow interaction inside popup */
+  
+  /* Automatically fade out after 3s */
+  animation: fadeOut 3s 3s forwards; /* Delay 3s, then fade out */
+}
+
+.popup.error {
+  background-color: #d9534f; /* Red for error messages */
+}
+
+.popup.success {
+  background-color: #597e59; /* Green for success messages */
+}
+
+.popup button {
+  background-color: transparent;
+  color: #ffffff;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.popup button.close-btn {
+  font-size: 30px;
+  line-height: 30px;
+}
+
+.popup button:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+</style>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let popupContainer = document.getElementById("popup-container-success");
+    if (popupContainer) {
+      setTimeout(function () {
+        popupContainer.querySelector(".popup").classList.add("fade-out"); 
+        setTimeout(() => popupContainer.style.display = "none", 3000); // Hides it after animation
+      }, 3000);
+    }
+  });
+</script>

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Your Platform – One Hub</title>
+  <meta name="description" content="Access our Mobile App, Web App, and SaaS Platform from one place." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#f5f8fb;
+      --card:#ffffff;
+      --muted:#6b7c93;
+      --text:#2c3e50;
+      --accent:#3a7bd5;
+      --accent-2:#4facfe;
+      --ring:rgba(58,123,213,.4);
+      --radius:14px;
+      --shadow:0 4px 16px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font:16px/1.5 "Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    }
+    a{color:inherit; text-decoration:none}
+    .container{max-width:1120px; margin:0 auto; padding:28px 20px 80px}
+    header{
+      display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:28px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; font-weight:700; letter-spacing:.3px;
+    }
+    .brand .logo{
+      width:32px; height:32px; border-radius:8px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:grid; place-items:center; color:#fff; font-weight:900;
+    }
+    .cta-min{
+      display:inline-block; padding:10px 14px; border:1px solid rgba(0,0,0,.1);
+      border-radius:10px; color:var(--accent); font-weight:600;
+      background:#fff; box-shadow:var(--shadow);
+    }
+    .hero{display:grid; gap:18px; margin:20px 0 34px;}
+    .hero h1{font-size:clamp(26px,4vw,44px); line-height:1.1; margin:0;}
+    .hero p{margin:0; color:var(--muted); max-width:58ch}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px;
+      background:rgba(58,123,213,.12); color:var(--accent); font-size:14px; width:max-content
+    }
+    .grid{display:grid; gap:18px; grid-template-columns: repeat(12,1fr);}
+    .card{
+      position: relative; /* ✅ fix: so .badge stays inside each card */
+      grid-column: span 12;
+      background:var(--card);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:var(--radius);
+      padding:22px; 
+      box-shadow:var(--shadow);
+      transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    .card:hover{transform:translateY(-3px); box-shadow:0 10px 28px rgba(0,0,0,.15);}
+    .card h3{margin:6px 0 8px; font-size:22px}
+    .card p{margin:0; color:var(--muted)}
+    .card .actions{margin-top:16px; display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; gap:10px; padding:12px 14px;
+      border-radius:10px; border:1px solid rgba(0,0,0,.1);
+      background:#fff; color:var(--accent); font-weight:600;
+    }
+    .btn.primary{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#fff; border:none;
+    }
+    .link{
+      display:inline-flex; align-items:center; gap:8px; font-weight:600; color:var(--accent);
+    }
+    .eyebrow{font-size:13px; color:var(--muted); letter-spacing:.3px; text-transform:uppercase}
+    @media (min-width:760px){.card{grid-column: span 6;}}
+    @media (min-width:1020px){.card{grid-column: span 4;}}
+    footer{
+      margin-top:40px; padding-top:20px; border-top:1px solid rgba(0,0,0,.08);
+      color:var(--muted); font-size:14px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    }
+    .badge{
+      position:absolute; top:14px; right:14px; font-size:12px; padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(0,0,0,.12); color:var(--muted); background:#f0f4f9
+    }
+    .icon{width:18px;height:18px; display:inline-block}
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">Y</div>
+        <span>LTL Protect</span>
+      </div>
+      <a class="cta-min" href="#products">Explore</a>
+    </header>
+
+    <section class="hero" aria-labelledby="title">
+      <span class="pill">One platform, three ways</span>
+      <h1 id="title">Access everything—Mobile, Web, and SaaS—from one place.</h1>
+      <p>Choose how you want to use our platform today. Download the mobile app, open the web app in your browser, or explore our B2B SaaS product for teams and enterprises.</p>
+    </section>
+
+    <section id="products" class="grid">
+      <!-- Mobile App -->
+      <article class="card">
+        <span class="badge">Mobile</span>
+        <div class="eyebrow">For on-the-go</div>
+        <h3>Mobile App</h3>
+        <p>Full power in your pocket. Secure, fast, and built for offline-first workflows.</p>
+        <div class="actions">
+          <a class="btn primary" href="#">Google Play</a>
+          <a class="btn" href="#">App Store</a>
+        </div>
+      </article>
+
+      <!-- Web App -->
+      <article class="card">
+        <span class="badge">Web</span>
+        <div class="eyebrow">No install needed</div>
+        <h3>Web App</h3>
+        <p>Run in any modern browser. Best for quick access on desktop and shared devices.</p>
+        <div class="actions">
+          <a class="btn primary" href="https://dev.ltlprotect.com/">Open Web App</a>
+        </div>
+      </article>
+
+      <!-- SaaS Product -->
+      <article class="card">
+        <span class="badge">SaaS</span>
+        <div class="eyebrow">For teams & orgs</div>
+        <h3>B2B SaaS Platform</h3>
+        <p>Multi-tenant, secure, and scalable. Centralized admin, SSO, roles, billing, and audit trails.</p>
+        <div class="actions">
+          <a class="btn primary" href="#">Start Free Trial</a>
+          <a class="btn" href="#">Login</a>
+        </div>
+      </article>
+    </section>
+
+    <footer>
+      <div>© 2025 Your Company</div>
+      <div>
+        <a class="link" href="#">Support</a> ·
+        <a class="link" href="#">Privacy</a> ·
+        <a class="link" href="#">Terms</a>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Meta Information -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status Dashboard</title>
+
+  <!-- Favicons -->
+  <link href="assets/img/LTL-256.jpg" rel="icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+
+  <!-- Bootstrap JS (Required for dropdown functionality) -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Inline Custom Styles -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0px;
+      background-color: #f4f6f8;
+      color: #111516;
+    }
+
+    .subscription-container {
+      background: #e8eef3;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 0px;
+    }
+
+    .subscription-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 16px;
+      text-align: left;
+      background-color: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .subscription-table th,
+    .subscription-table td {
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+    }
+
+    .subscription-table th {
+      background-color: #9cc0df;
+      color: #483f3f;
+      font-weight: bold;
+    }
+
+    .subscription-table tr:nth-child(even) {
+      background-color: #f4f6f8;
+    }
+
+    .subscription-table tr:hover {
+      background-color: #e2e6ea;
+    }
+
+    /* CSS for the pop-up */
+    .popup-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .popup-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      width: 400px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .action-button {
+      color: #fff;
+      padding: 8px 30px;
+      border-radius: 30px;
+      cursor: pointer;
+      border-color: transparent !important;
+      white-space: nowrap;
+    }
+
+    .action-button.cancel-button {
+      background-color: #dc3545;
+    }
+
+    .action-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .action-button.refund-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .reload-btn {
+        background-color: #007BFF; /* Blue color */
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .reload-btn:hover {
+        background-color: #0056b3; /* Darker blue */
+        transform: scale(1.05);
+    }
+
+    .reload-btn:active {
+        transform: scale(0.95);
+    }
+
+    .reload-btn:disabled {
+        background-color: rgb(68, 65, 65); /* Change to any color you prefer */
+        color: white; /* Text color */
+        border: 1px solid rgb(104, 78, 78); /* Optional: Change border color */
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+  </style>
+</head>
+
+<body>
+  {% include 'header.html' %}
+  <div class="body-wrapper">
+    <div class="main">
+      <div class="subscription-container h-100 py-4 py-lg-5 px-0">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+              <div class="table-responsive">
+                <table class="subscription-table my-0">
+                  <thead>
+                      <tr>
+                          <th style="text-align: center;">Image Name</th>
+                          <th style="text-align: center;">Image Status</th>
+                          <th style="text-align: center;">Date</th>
+                          <th style="text-align: center;" width="500">Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for image in image_list %}
+                      <tr>
+                          <td style="text-align: center; display: flex; align-items: center; gap: 10px;">
+                              {% if image.image_url and (image.image_url.endswith('.png') or image.image_url.endswith('.jpg') or image.image_url.endswith('.jpeg') or image.image_url.endswith('.gif') or image.image_url.endswith('.webp') or image.image_url.endswith('.avif')) %}
+                                  <img src="{{ image.image_url }}" alt="Image" width="40" height="40" style="border-radius: 5px;">
+                              {% elif image.image_url and (image.image_url.endswith('.mp4') or image.image_url.endswith('.mov') or image.image_url.endswith('.avi') or image.image_url.endswith('.mkv') or image.image_url.endswith('.wmv')) %}
+                                  <video width="40" height="40" style="border-radius: 5px;" controls>
+                                      <source src="{{ image.image_url }}" type="video/mp4">
+                                      Your browser does not support the video tag.
+                                  </video>
+                              {% else %}
+                                  <i class="fa fa-file" style="font-size: 24px; color: gray;"></i>
+                              {% endif %}
+                              <span>{{ image.image_name }}</span>
+                          </td>
+                          <td style="text-align: center;">
+                              {% if image.image_status == 'succeeded' %}
+                                  <i class="fa fa-check-circle" style="color: green;"></i>
+                                  <span style="color: green; font-weight: bold;">Succeeded</span>
+                              {% elif image.image_status == 'failed' %}
+                                  <i class="fa fa-times-circle" style="color: red;"></i>
+                                  <span style="color: red; font-weight: bold;">Failed</span>
+                              {% elif image.image_status == 'in_progress' %}
+                                  <i class="fa fa-spinner fa-spin" style="color: #4682B4;"></i>
+                                  <span style="color: #4682B4; font-weight: bold;">In Progress</span>
+                              {% else %}
+                                  <i class="fa fa-info-circle" style="color: gray;"></i>
+                                  <span>{{ image.image_status }}</span>
+                              {% endif %}
+                          </td>                       
+                          <td style="text-align: center;">{{ image.upload_date }}</td>
+                          <td style="text-align: center;">
+                            <form action="/reload" method="post" style="display: inline;">
+                                <input type="hidden" name="image_id" value="{{ image.id }}">
+                                <button type="submit" class="reload-btn" 
+                                    {% if image.image_status == 'succeeded' %} disabled {% endif %}>
+                                    Reload <i class="fa fa-refresh"></i>
+                                </button>
+                            </form>
+                          </td>                
+                      </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+              
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% include 'footer.html' %}
+
+  </div>
+
+  <script src="assets/js/footer-bot.js"></script>
+  <script>
+    let maxRefreshes = 5;
+    let refreshCount = localStorage.getItem("refreshCount") || 0;
+  
+    function refreshPage() {
+      if (refreshCount < maxRefreshes) {
+        refreshCount++;
+        localStorage.setItem("refreshCount", refreshCount);
+        location.reload();
+      }
+    }
+  
+    if (refreshCount < maxRefreshes) {
+      setInterval(refreshPage, 4000); // Refresh every 4 seconds
+    } else {
+      localStorage.removeItem("refreshCount"); // Clear storage after max refreshes
+    }
+  </script>
+  
+  
+</body>
+
+
+</html>

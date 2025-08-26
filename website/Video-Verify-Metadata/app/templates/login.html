@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LTL Protect</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+    <!-- Favicons -->
+  <link href="assets/img/LTL-256.jpg" rel="icon">
+
+    <style>
+        body {
+            background-color: #e9f0f7;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 60px 20px 30px; /* ↓ was 80px top, 40px bottom */
+            background-color: #d0e2f2;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 600;
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+            height: 100%;
+            min-height: 360px;
+            transition: transform 0.2s ease;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-img-top {
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .learn-link {
+            color: #0d6efd;
+            font-weight: 500;
+        }
+
+        .learn-link:hover {
+            text-decoration: underline;
+        }
+
+        .expandable-card.expanded {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            z-index: 1050;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: white;
+            border-radius: 12px;
+        }
+
+        .expandable-card.expanded .card-body {
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        body.card-expanded {
+            overflow: hidden;
+        }
+
+        .card-overlay {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1040;
+        }
+    </style>
+
+    <!-- Main CSS File -->
+    <link href="assets/css/main.css" rel="stylesheet">
+
+</head>
+<body>
+    {% include 'header.html' %}
+
+    {% if error_message %}
+        <div class="alert alert-danger text-center mt-3">
+            <strong>Notice:</strong> {{ error_message }}
+        </div>
+    {% endif %}
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1>Welcome to LTL Protect</h1>
+        <p>Protect your intellectual property by embedding smart metadata into your images and videos.</p>
+        <a href="/login" class="btn btn-primary btn-lg">Login</a>
+        <a href="/our_services" class="btn btn-primary btn-lg">Our Services</a>
+    </div>
+    
+    <!-- How it works -->
+    <div class="container">
+        <h2 class="section-title">How it works</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+            <div class="card card-custom h-100">
+            <img src="/assets/img/upload.avif" class="card-img-top" alt="Upload Image">
+            <div class="card-body">
+                <h5 class="card-title">Upload Your File</h5>
+                <p class="card-text">
+                    Sign in using Google or Amazon. Then upload
+                    <span class="dots">...</span>
+                    <span class="more-text" style="display: none;">
+                       an image or video with metadata. We support a wide range of formats. Like png, jpg, jpeg, webp for images and mp4, avi, mkv, mov for videos.
+                    </span>
+                    <button onclick="toggleText(this)" style="border: none; background: none; color: #007bff; padding: 0; margin-left: 5px;">
+                      Read More
+                    </button>
+                </p>
+                <a href="/login" class="learn-link">Login →</a>
+            </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card card-custom h-100">
+            <img src="/assets/img/payment.webp" class="card-img-top" alt="Secure IP">
+            <div class="card-body">
+                <h5 class="card-title">Secure Payments</h5>
+                <p class="card-text">
+                    We use Stripe as our trusted payment
+                    <span class="dots">...</span>
+                    <span class="more-text" style="display: none;">
+                        gateway to ensure secure and seamless transactions. Your payment information is encrypted and safely processed.
+                    </span>
+                    <button onclick="toggleText(this)" style="border: none; background: none; color: #007bff; padding: 0; margin-left: 5px;">
+                      Read More
+                    </button>
+                </p>
+            </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card card-custom h-100">
+            <img src="/assets/img/verified.jpeg" class="card-img-top" alt="Download File">
+            <div class="card-body">
+                <h5 class="card-title">Download & Verify</h5>
+                <p class="card-text">
+                    When you download your image 
+                    <span class="dots">...</span>
+                    <span class="more-text" style="display: none;">
+                        or video, you will see the metadata in the file properties. You can verify metadata anytime using trusted tools.
+                    </span>
+                    <button onclick="toggleText(this)" style="border: none; background: none; color: #007bff; padding: 0; margin-left: 5px;">
+                      Read More
+                    </button>
+                </p>
+            </div>
+            </div>
+        </div>
+        </div>
+
+        <br><br>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col">
+                <div class="card card-custom h-100">
+                <img src="/assets/img/metadata.jpg" class="card-img-top" alt="Add Metadata">
+                <div class="card-body">
+                    <h5 class="card-title">Add Metadata</h5>
+                    <p class="card-text">
+                        Choose the fields you want in metadata:
+                        <span class="dots">...</span>
+                        <span class="more-text" style="display: none;">
+                            Creator Name, Creator Address, Creator mail, copyright, location, date, and more.
+                        </span>
+                        <button onclick="toggleText(this)" style="border: none; background: none; color: #007bff; padding: 0; margin-left: 5px;">
+                          Read More
+                        </button>
+                    </p>
+                </div>
+                </div>
+        </div>
+        <div class="col">
+            <div class="card card-custom h-100">
+            <img src="/assets/img/c2pa.png" class="card-img-top" alt="C2PA">
+            <div class="card-body">
+                <h5 class="card-title">Built with C2PA</h5>
+                <p class="card-text">We use industry-backed standards supported by Adobe, Meta, and more.</p>
+                <a href="https://c2pa.org/" class="learn-link" target="_blank">Explore C2PA →</a>
+            </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card card-custom h-100">
+            <img src="/assets/img/help.webp" class="card-img-top" alt="Support">
+            <div class="card-body">
+                <h5 class="card-title">Need Help?</h5>
+                <p class="card-text">We’re here to support you. Reach out anytime with questions or issues.</p>
+                <a href="mailto:support@longtailedleopard.com" class="learn-link">Contact support →</a>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <br><br>
+
+    {% include 'footer.html' %}
+    
+    <script>
+        function toggleText(button) {
+          const dots = button.parentElement.querySelector('.dots');
+          const moreText = button.parentElement.querySelector('.more-text');
+      
+          const isHidden = moreText.style.display === "none";
+      
+          moreText.style.display = isHidden ? "inline" : "none";
+          dots.style.display = isHidden ? "none" : "inline";
+          button.textContent = isHidden ? "Read Less" : "Read More";
+        }
+      </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

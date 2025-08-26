@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Pick Your Plan</title>
+  <meta name="description" content="Purchase page with responsive design and secure checkout functionality.">
+  <meta name="keywords" content="Purchase, Secure Checkout, Products, Responsive Design">
+
+  <!-- Favicons -->
+  <link href="assets/img/LTL-256.jpg" rel="icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+
+  <!-- Inline Styles -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f6f8;
+      color: #5dabcf;
+    }
+
+    .subscription-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 30px;
+      padding: 20px;
+      margin-top: 0px;
+      background: #e8eef3;
+      border-radius: 10px;
+    }
+
+    .subscription-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      max-width: 100%;
+      width: 100%;
+      padding: 30px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .subscription-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .subscription-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #0056b3;
+    }
+
+    .subscription-price {
+      font-size: 32px;
+      font-weight: bold;
+      margin: 20px 0;
+      color: #333;
+    }
+
+    .subscription-details {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      color: #666;
+    }
+
+    .subscribe-button {
+      background-color: #007bff;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+    }
+
+    .subscribe-button:hover {
+      background-color: #0056b3;
+    }
+
+    .back-button {
+      margin-top: 20px;
+      background-color: #2089e7;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .back-button:hover {
+      background-color: #5a6268;
+    }
+
+    @media (max-width: 768px) {
+      .subscription-container {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+  </style>
+
+  <!-- JavaScript for Bootstrap (required for dropdown functionality) -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js" defer></script>
+  <script src="assets/vendor/aos/aos.js" defer></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js" defer></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js" defer></script>
+</head>
+
+<body>
+  {% include 'header.html' %}
+
+  <div class="body-wrapper">
+    <div class="main">
+      <div class="subscription-container h-100 py-4 py-lg-5 w-100 gap-0 px-0">
+
+        <div class="container">
+          <div class="row">
+            {% for product in products %}
+            <!-- Premium Subscription -->
+            <div class="col col-sm-6 col-md-4 mb-4">
+              <div class="subscription-card">
+                <h1 class="subscription-title">{{product.product_name}}</h1>
+                <div class="subscription-price">{{product.product_price}}</div>
+                <p class="subscription-details">
+                  {{product.description}}
+                </p>
+
+                <form action="/checkout" method="POST">
+                  <input type="hidden" name="price_id" value="{{ product.price_id }}">
+                  <button type="submit" class="btn btn-site subscribe-button">Subscribe Now</button>
+                </form>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+    {% include 'footer.html' %}
+
+  </div>
+
+  <script src="assets/js/footer-bot.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Gallery View</title>
+  <meta name="description" content="Purchase page with responsive design and secure checkout functionality.">
+  <meta name="keywords" content="Purchase, Secure Checkout, Products, Responsive Design">
+
+  <!-- Favicons -->
+  <link href="assets/img/LTL-256.jpg" rel="icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/lightbox2@2/dist/css/lightbox.min.css" rel="stylesheet" />
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+  <!-- Swiper JS -->
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+
+  <!-- Inline Styles -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f6f8;
+      color: #5dabcf;
+    }
+
+    .subscription-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 30px;
+      padding: 20px;
+      margin-top: 0px;
+      background: #e8eef3;
+      border-radius: 10px;
+    }
+
+    .subscription-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      max-width: 100%;
+      width: 100%;
+      padding: 30px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .subscription-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .subscription-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #0056b3;
+    }
+
+    .subscription-price {
+      font-size: 32px;
+      font-weight: bold;
+      margin: 20px 0;
+      color: #333;
+    }
+
+    .subscription-details {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      color: #666;
+    }
+
+    .subscribe-button {
+      background-color: #007bff;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+    }
+
+    .subscribe-button:hover {
+      background-color: #0056b3;
+    }
+
+    .back-button {
+      margin-top: 20px;
+      background-color: #2089e7;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .back-button:hover {
+      background-color: #5a6268;
+    }
+
+    @media (max-width: 768px) {
+      .subscription-container {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background-color: rgba(0, 0, 0, 0.4);
+      color: white;
+      border: none;
+      padding: 10px; /* match the other icon's space */
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .delete-btn:hover {
+      background-color: rgba(14, 12, 13, 0.6);
+      transform: scale(1.05); /* subtle zoom on hover */
+
+    }
+
+    .delete-btn svg {
+      display: block;
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      margin: 15% auto;
+      width: 300px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    #imageModal .modal-dialog {
+      max-width: 100%;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    #imageModal .modal-content {
+      width: auto;
+      height: auto;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+    #imageModal .modal-body {
+      padding: 0;
+      text-align: center;
+    }
+
+    #modalImage {
+      width: 500px;         /* Reduced width */
+      height: 450px;        /* Reduced height */
+      object-fit: cover;
+      /* border-radius: px; */
+      display: block;
+      margin: auto;
+    }
+
+    /* Remove white background and shadow */
+    #videoModal .modal-content {
+      background-color: transparent;
+      box-shadow: none;
+      border: none;
+    }
+
+    /* Tweak the video appearance */
+    #modalVideo {
+      width: 500px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 10px;
+      display: block;
+      margin: auto;
+      background-color: black;
+    }
+
+    .nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1055; /* Above modal and video */
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+
+  .left-arrow {
+    left: 10px;
+  }
+
+  .right-arrow {
+    right: 10px;
+  }
+
+  .nav-arrow:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  .cr-tag {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-color: #ffffff;
+    cursor: pointer;
+    border: 2px solid #000000;
+    border-radius: 50% 50% 0 50%;
+    padding: 4px 8px; /* slightly larger padding */
+    font-size: 14px; /* bigger text */
+    font-weight: bold;
+    color: #000000;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;  /* increased width */
+    height: 36px; /* increased height */
+    box-shadow: 0 0 3px rgba(0,0,0,0.2);
+  }
+  /* Modal styling */
+  #crMetadataModal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    font-family: sans-serif;
+  }
+
+  #crMetadataModal.show {
+    display: flex;
+  }
+
+  .cr-modal-box {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 400px;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  }
+
+  .cr-metadata-header {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .cr-metadata-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .cr-metadata-item strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 2px;
+    color: #333;
+  }
+
+  .cr-metadata-item:last-child {
+    border-bottom: none;
+  }
+
+  .cr-close-btn {
+    margin-top: 16px;
+    background: #1a7fc2;
+    color: whitesmoke;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 25px;
+    cursor: pointer;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cr-close-btn:hover {
+    background: #1a7fc2;
+  }
+  </style>
+
+  <!-- JavaScript for Bootstrap (required for dropdown functionality) -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js" defer></script>
+  <script src="assets/vendor/aos/aos.js" defer></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js" defer></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js" defer></script>
+</head>
+
+<body>
+  {% include 'header.html' %}
+
+  <div class="body-wrapper">
+      <main class="main">
+        <section class="section gallery_row h-100">
+            <div class="container">
+              <div class="row g-3">
+                  {% for content in user_contents %}
+                      <div class="col-6 col-sm-4 col-md-3 mb-3 mt-0">
+                        <div class="img-card position-relative">
+                            {% if content.content_url.endswith('.png') or content.content_url.endswith('.jpg') or content.content_url.endswith('.jpeg') or content.content_url.endswith('.gif') or content.content_url.endswith('.webp') %}
+                                <img src="{{ content.content_url }}" 
+                                    alt="User Image" 
+                                    class="img-fluid" 
+                                    style="cursor: pointer;"
+                                    onclick="openImageModal('{{ content.content_url }}')"/>
+
+                                <div class="cr-tag" onclick="fetchCRMetadata(this)" data-file-url="{{ content.content_url }}">
+                                  <span>cr</span>
+                                </div>
+                            
+                            {% elif content.content_url.endswith('.mp4') or content.content_url.endswith('.mov') or content.content_url.endswith('.avi') or content.content_url.endswith('.mkv') or content.content_url.endswith('.wmv') %}
+                                <video class="img-fluid" 
+                                      style="cursor: pointer;"
+                                      muted 
+                                      onclick="openVideoModal('{{ content.content_url }}')">
+                                    <source src="{{ content.content_url }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+
+                                <div class="cr-tag" onclick="fetchCRMetadata(this)" data-file-url="{{ content.content_url }}">
+                                  <span>cr</span>
+                                </div>
+                
+                            {% else %}
+                                <span>Unsupported File</span>
+                            {% endif %}
+
+                            <!-- Delete Form -->
+                            <form class="delete-form" method="POST" action="{{ url_for('delete_image') }}" style="display:inline;">
+                              <input type="hidden" name="file_url" value="{{ content.content_url }}">
+                              <button type="button" class="delete-btn" title="Delete" onclick="openDeleteModal(this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff" viewBox="0 0 24 24" width="16" height="16">
+                                  <path d="M9 3v1H4v2h1v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6h1V4h-5V3H9zm8 3v14H7V6h10zM9 8v10h2V8H9zm4 0v10h2V8h-2z"/>
+                                </svg>
+                              </button>
+                            </form>
+
+                            <div id="deleteModal" class="modal" style="display:none; position:fixed; z-index:9999; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
+                              <div class="modal-content" style="background:#fff; padding:20px; margin:15% auto; width:300px; border-radius:8px; text-align:center;">
+                                <p>Deleting this photo is permanent. Once deleted, it can no longer be linked or recovered.</p>
+                                <p>Are you sure you want to proceed?</p>
+                                <div style="margin-top:20px;">
+                                  <button onclick="confirmDelete()" style="padding:6px 12px; background:#e53935; color:white; border:none; border-radius:4px;">Yes, Delete</button>
+                                  <button onclick="closeModal()" style="padding:6px 12px; margin-left:10px; background:#ccc; border:none; border-radius:4px;">Cancel</button>
+                                </div>
+                              </div>
+                            </div>
+                        
+                          <!-- Download Button -->
+                            <a href="{{ content.download_url }}" class="download-btn open-btn" title="Download">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff" width="16" height="16">
+                                <path d="M12 16l4-5h-3V4h-2v7H8l4 5zm8 2H4v2h16v-2z"/>
+                              </svg>
+                            </a>
+                        </div>
+                      </div>
+                  {% endfor %}
+              </div>
+
+              <!-- Image Modal -->
+              <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-body p-0 position-relative">
+                      <!-- Left Arrow -->
+                      <button id="prevImageBtn" class="nav-arrow left-arrow" aria-label="Previous image">
+                        &#10094;
+                      </button>
+
+                      <!-- Right Arrow -->
+                      <button id="nextImageBtn" class="nav-arrow right-arrow" aria-label="Next image">
+                        &#10095;
+                      </button>
+
+                      <img id="modalImage" src="" alt="Full Image" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Modal for Video -->
+              <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered fullscreen-modal">
+                    <div class="modal-content">
+                        <div class="modal-body p-0 position-relative">
+                          <!-- Left Arrow -->
+                          <button id="prevVideoBtn" class="nav-arrow left-arrow" aria-label="Previous video">&#10094;</button>
+                          <!-- Right Arrow -->
+                          <button id="nextVideoBtn" class="nav-arrow right-arrow" aria-label="Next video">&#10095;</button>
+
+
+                          <video id="modalVideo" class="w-100 h-100 object-fit-contain" controls>
+                              <source id="modalVideoSource" src="" type="video/mp4">
+                              Your browser does not support the video tag.
+                          </video>
+                        </div>
+                    </div>
+                </div>
+              </div>  
+            </div>
+        </section>
+      </main>
+    {% include 'footer.html' %}
+  </div>
+
+  <script src="assets/js/footer-bot.js"></script>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    function setImageHeight() {
+        document.querySelectorAll(".gallery_row .img-card img").forEach(function (img) {
+            if (img.complete) {
+                img.style.height = img.clientWidth + "px"; // Set height equal to width
+            } else {
+                img.onload = function () {
+                    img.style.height = img.clientWidth + "px";
+                };
+            }
+        });
+    }
+
+    // Run when the DOM is loaded
+    setImageHeight();
+
+    // Run again when the page is fully loaded (ensuring images are loaded)
+    window.addEventListener("load", setImageHeight);
+});
+  </script> 
+
+<script>
+  let formToSubmit = null;
+
+  function openDeleteModal(button) {
+    formToSubmit = button.closest('form');
+    document.getElementById('deleteModal').style.display = 'block';
+  }
+
+  function closeModal() {
+    formToSubmit = null;
+    document.getElementById('deleteModal').style.display = 'none';
+  }
+
+  function confirmDelete() {
+    if (formToSubmit) {
+      formToSubmit.submit();
+    }
+  }
+</script>
+
+<!-- <script>
+  function openImageModal(url) {
+    const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+    document.getElementById('modalImage').src = url;
+    modal.show();
+  }
+
+  function openVideoModal(url) {
+    const modal = new bootstrap.Modal(document.getElementById('videoModal'));
+    document.getElementById('modalVideoSource').src = url;
+    const videoElement = document.getElementById('modalVideo');
+    videoElement.load();  // reload source
+    modal.show();
+  }
+</script> -->
+
+
+<script>
+  const mediaItems = [];
+  let currentIndex = 0;
+
+  // Collect media items & bind onclick handlers
+  document.querySelectorAll('.img-card').forEach(card => {
+    const img = card.querySelector('img');
+    const videoSource = card.querySelector('video source');
+
+    if (img) {
+      const index = mediaItems.length;
+      mediaItems.push({ url: img.src, type: 'image' });
+      img.onclick = () => openUnifiedModal(index);
+    } else if (videoSource) {
+      const index = mediaItems.length;
+      mediaItems.push({ url: videoSource.src, type: 'video' });
+      card.querySelector('video').onclick = () => openUnifiedModal(index);
+    }
+  });
+
+  // Show content in modal
+  function openUnifiedModal(index) {
+    currentIndex = index;
+    const media = mediaItems[currentIndex];
+
+    if (media.type === 'image') {
+      document.getElementById('modalImage').src = media.url;
+      document.getElementById('imageModal').classList.add('show', 'd-block');
+      document.body.classList.add('modal-open');
+    } else {
+      document.getElementById('modalVideoSource').src = media.url;
+      const video = document.getElementById('modalVideo');
+      video.load();
+      document.getElementById('videoModal').classList.add('show', 'd-block');
+      document.body.classList.add('modal-open');
+    }
+  }
+
+  function closeAllModals() {
+    document.getElementById('imageModal').classList.remove('show', 'd-block');
+    document.getElementById('videoModal').classList.remove('show', 'd-block');
+    document.body.classList.remove('modal-open');
+  }
+
+  function showNextMedia() {
+    currentIndex = (currentIndex + 1) % mediaItems.length;
+    closeAllModals();
+    openUnifiedModal(currentIndex);
+  }
+
+  function showPrevMedia() {
+    currentIndex = (currentIndex - 1 + mediaItems.length) % mediaItems.length;
+    closeAllModals();
+    openUnifiedModal(currentIndex);
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (document.body.classList.contains('modal-open')) {
+      if (e.key === 'ArrowRight') showNextMedia();
+      else if (e.key === 'ArrowLeft') showPrevMedia();
+      else if (e.key === 'Escape') closeAllModals();
+    }
+  });
+
+  // Arrow buttons
+  document.getElementById('prevImageBtn').onclick = showPrevMedia;
+  document.getElementById('nextImageBtn').onclick = showNextMedia;
+  document.getElementById('prevVideoBtn').onclick = showPrevMedia;
+  document.getElementById('nextVideoBtn').onclick = showNextMedia;
+
+  // Close image modal when clicking outside the modal content
+  document.getElementById('imageModal').addEventListener('click', function(event) {
+    if (!event.target.closest('.modal-content')) {
+      closeAllModals();  // Use your existing close function
+    }
+  });
+
+  // Close video modal when clicking outside the modal content
+  document.getElementById('videoModal').addEventListener('click', function(event) {
+    if (!event.target.closest('.modal-content')) {
+      closeAllModals();  // Use your existing close function
+    }
+  });
+</script>
+
+<script>
+  fetch(`/get_cr_metadata?file_url=${encodeURIComponent(file_url)}`)
+  .then(res => res.json())
+  .then(data => {
+    if (data.message === "CR metadata fetched successfully.") {
+      // display or process metadata
+      console.log(data.data);
+    } else {
+      alert(data.message);
+    }
+  });
+</script>
+
+<!-- <script>
+  function fetchCRMetadata(element) {
+    const fileUrl = element.getAttribute('data-file-url');
+
+    fetch(`/get_cr_metadata?file_url=${encodeURIComponent(fileUrl)}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.data) {
+          // You can replace this with a modal or UI rendering
+          alert("CR Metadata:\n\n" + JSON.stringify(data.data, null, 2));
+        } else {
+          alert(data.message || "No metadata found.");
+        }
+      })
+      .catch(error => {
+        alert("Error fetching metadata.");
+        console.error(error);
+      });
+  }
+</script> -->
+
+<script>
+  function fetchCRMetadata(element) {
+    const fileUrl = element.getAttribute('data-file-url');
+
+    fetch(`/get_cr_metadata?file_url=${encodeURIComponent(fileUrl)}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.data) {
+          const md = data.data;
+
+          const html = `
+            <div class="cr-metadata-header">Content Credentials</div>
+            <div class="cr-metadata-item"><strong>Creator Name</strong>${md.creator_name || '-'}</div>
+            <div class="cr-metadata-item"><strong>Title</strong>${md.title || '-'}</div>
+            <div class="cr-metadata-item"><strong>Description</strong>${md.description || '-'}</div>
+            <div class="cr-metadata-item"><strong>Creator Email</strong>${md.creator_email || '-'}</div>
+            <div class="cr-metadata-item"><strong>Copyright Notice</strong>${md.copyright_notice || '-'}</div>
+            <div class="cr-metadata-item"><strong>Creation Date</strong>${md.date_created || '-'}</div>
+          `;
+
+          document.getElementById('crMetadataContent').innerHTML = html;
+          document.getElementById('crMetadataModal').classList.add('show');
+        } else {
+          alert(data.message || "No metadata found.");
+        }
+      })
+      .catch(error => {
+        alert("Error fetching metadata.");
+        console.error(error);
+      });
+  }
+
+  function closeCRModal() {
+    document.getElementById('crMetadataModal').classList.remove('show');
+    document.getElementById('crMetadataContent').innerHTML = '';
+  }
+</script>
+
+<!-- Modal HTML -->
+<div id="crMetadataModal">
+  <div class="cr-modal-box">
+    <div id="crMetadataContent"></div>
+    <button class="cr-close-btn" onclick="closeCRModal()">Close</button>
+  </div>
+</div>
+
+
+</body>
+
+</html>

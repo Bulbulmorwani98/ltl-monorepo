@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Meta Information -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Hub</title>
+
+  <!-- Favicons -->
+  <link href="assets/img/LTL-256.jpg" rel="icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+
+  <!-- Bootstrap JS (Required for dropdown functionality) -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    /* Show ⦸ as cursor when disabled */
+    #downloadSelected:disabled {
+      background-color: #d6d6d6;
+      border-color: #d6d6d6;
+      color: #a1a1a1;
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><text x="0" y="20" font-size="20">⦸</text></svg>') 16 16, not-allowed;
+      opacity: 1;
+    }
+
+    /* --- New styles for web (3-column) view --- */
+    .hub-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .user-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      overflow: hidden;
+      transition: transform .12s ease;
+      cursor: pointer;
+    }
+    .user-card:hover { transform: translateY(-4px); }
+
+    .user-thumb {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+      display: block;
+      background: #f3f3f3;
+    }
+
+    .user-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .count-badge {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      background: rgba(0,0,0,0.72);
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 13px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.2);
+    }
+
+    .user-email {
+      padding: 10px;
+      font-size: 14px;
+      color: #333;
+      word-break: break-all;
+    }
+
+    /* hidden gallery container (server-side rendered thumbnails kept here) */
+    .user-hidden-gallery { display: none; }
+
+    /* Gallery modal */
+    #userGalleryModal .modal-dialog { max-width: 950px; }
+    #userGalleryModal .gallery-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-start;
+    }
+    #userGalleryModal .gallery-grid img {
+      width: 140px;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    /* responsive tweak */
+    @media (min-width: 992px) {
+      .col-desktop { width: calc(33.3333% - 10.6666px); } /* approximate 3-columns with gap */
+    }
+    @media (max-width: 991px) {
+      .user-thumb { height: 160px; }
+    }
+    @media (max-width: 575px) {
+      .user-thumb { height: 140px; }
+    }
+
+  .nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1055; /* Above modal and video */
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+
+  .left-arrow {
+    left: 10px;
+  }
+
+  .right-arrow {
+    right: 10px;
+  }
+
+  .nav-arrow:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  .cr-tag {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    cursor: pointer;
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 50% 50% 0 50%;
+    padding: 4px 8px; /* slightly larger padding */
+    font-size: 14px; /* bigger text */
+    font-weight: bold;
+    color: #000000;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;  /* increased width */
+    height: 36px; /* increased height */
+    box-shadow: 0 0 3px rgba(0,0,0,0.2);
+  }
+  /* Modal styling */
+  #crMetadataModal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    font-family: sans-serif;
+  }
+
+  #crMetadataModal.show {
+    display: flex;
+  }
+
+  .cr-modal-box {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 400px;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  }
+
+  .cr-metadata-header {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .cr-metadata-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .cr-metadata-item strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 2px;
+    color: #333;
+  }
+
+  .cr-metadata-item:last-child {
+    border-bottom: none;
+  }
+
+  .cr-close-btn {
+    margin-top: 16px;
+    background: #1a7fc2;
+    color: whitesmoke;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 25px;
+    cursor: pointer;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cr-close-btn:hover {
+    background: #1a7fc2;
+  }
+
+  /* .cr-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: white;
+  color: black;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+} */
+
+  </style>
+</head>
+
+<body>
+  {% include 'header.html' %}
+
+  <div class="search-sort-wrapper container my-3 d-flex justify-content-between align-items-center">
+    <!-- Search Box (added id for JS) -->
+    <form method="GET" action="/image_hub" class="search-container d-flex" style="gap:8px; align-items:center;">
+        <input id="searchInput" type="text" name="search" class="form-control" placeholder="Search by email or image name..."
+               value="{{ request.args.get('search', '') }}" style="min-width:300px;" />
+        <button type="submit" class="btn btn-outline-secondary">🔍</button>
+    </form>
+
+    <!-- Sorting Dropdown -->
+    <form method="GET" action="/image_hub" class="sort-container d-flex" style="gap:8px; align-items:center;">
+        <select id="sort" name="sort" class="form-select" onchange="this.form.submit()" style="min-width:180px;">
+            <option value="name_asc" {% if request.args.get('sort') == 'name_asc' %}selected{% endif %}>Image Name (A-Z)</option>
+            <option value="name_desc" {% if request.args.get('sort') == 'name_desc' %}selected{% endif %}>Image Name (Z-A)</option>
+            <option value="newest" {% if request.args.get('sort') == 'newest' %}selected{% endif %}>Newest First</option>
+            <option value="oldest" {% if request.args.get('sort') == 'oldest' %}selected{% endif %}>Oldest First</option>
+        </select>
+        <!-- Ensure the search term is preserved -->
+        <input type="hidden" name="search" value="{{ request.args.get('search', '') }}">
+    </form>
+  </div>
+
+  <div class="body-wrapper">
+  <main class="main">
+    <section class="section gallery_row h-100">
+      <div class="container">
+
+        <div class="mb-3 d-flex justify-content-end">
+          <button id="downloadSelected" class="btn btn-primary" disabled>
+            Download Selected
+          </button>
+        </div>
+
+        <!-- NEW: 3-column grid: render 1 card per user -->
+        <div id="hubGrid" class="hub-grid">
+          {% for user_id, content in content_obj.items() %}
+            {% set first_item = content.imageurl[0] %}
+            <div class="user-card col-desktop" data-user="{{ user_id }}">
+              
+              <!-- Thumbnail -->
+              <div class="user-thumb img-card position-relative open-user-gallery" data-user="{{ user_id }}">
+                {% if first_item.original_url.endswith('.png') or first_item.original_url.endswith('.jpg') or first_item.original_url.endswith('.jpeg') or first_item.original_url.endswith('.gif') or first_item.original_url.endswith('.webp') %}
+                  <img src="{{ first_item.original_url }}" alt="User Image" loading="lazy" />
+                {% elif first_item.original_url.endswith('.mp4') or first_item.original_url.endswith('.mov') %}
+                  <video muted playsinline style="width:100%;height:100%;object-fit:cover;">
+                    <source src="{{ first_item.original_url }}">
+                  </video>
+                {% else %}
+                  <div style="display:flex;align-items:center;justify-content:center;height:100%;">Unsupported</div>
+                {% endif %}
+
+                {% if content.imageurl|length > 1 %}
+                  <div class="count-badge">+{{ content.imageurl|length - 1 }}</div>
+                {% endif %}
+              </div> <!-- ✅ closes .user-thumb -->
+
+              <!-- User email -->
+              <div class="user-email">{{ user_id }}</div>
+
+              <!-- Hidden gallery items for this user (JS will read these) -->
+              <div class="user-hidden-gallery" data-user="{{ user_id }}">
+                {% for item in content.imageurl %}
+                  <div class="gallery-item position-relative" 
+                       data-type="{% if item.original_url.endswith('.mp4') or item.original_url.endswith('.mov') %}video{% else %}image{% endif %}" 
+                       data-src="{{ item.original_url }}" 
+                       data-download="{{ item.download_url|default('') }}">
+                    
+                    {% if item.original_url.endswith('.png') or item.original_url.endswith('.jpg') or item.original_url.endswith('.jpeg') or item.original_url.endswith('.gif') or item.original_url.endswith('.webp') %}
+                      <img src="{{ item.original_url }}" class="img-fluid" loading="lazy" />
+                    {% elif item.original_url.endswith('.mp4') or item.original_url.endswith('.mov') %}
+                      <video muted playsinline>
+                        <source src="{{ item.original_url }}">
+                      </video>
+                    {% endif %}
+                    
+                    <!-- CR Tag -->
+                    <div class="cr-tag" onclick="fetchCRMetadata(this)" data-file-url="{{ item.original_url }}">
+                      <span>cr</span>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div> <!-- ✅ closes .user-card -->
+          {% endfor %}
+        </div>
+
+        <div class="mt-4 text-end">
+          <button type="button" class="btn btn-site">Load More</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  {% include 'footer.html' %}
+</div>
+  <!-- Gallery Modal (shows all images of a user as thumbnails) -->
+  <div class="modal fade" id="userGalleryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="userGalleryTitle" class="modal-title">Gallery</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="userGallery" class="gallery-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reuse existing imageModal for fullscreen viewing -->
+  <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered fullscreen-modal">
+      <div class="modal-content">
+        <div class="modal-body p-0 position-relative">
+          <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+          <img id="modalImage" src="" class="w-100 h-100 object-fit-contain" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- keep videoModal if you want video fullscreen (wired below) -->
+  <div class="modal fade" id="videoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered fullscreen-modal">
+      <div class="modal-content">
+        <div class="modal-body p-0 position-relative">
+          <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+          <video id="modalVideo" class="w-100 h-100 object-fit-contain" controls>
+            <source id="modalVideoSource" src="" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CR Metadata modal (kept) -->
+  <div id="crMetadataModal">
+    <div class="cr-modal-box">
+      <div id="crMetadataContent"></div>
+      <button class="cr-close-btn" onclick="closeCRModal()">Close</button>
+    </div>
+  </div>
+
+  <script src="assets/js/footer-bot.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Open user gallery on click of the card/thumb
+      document.querySelectorAll('.open-user-gallery').forEach(el => {
+        el.addEventListener('click', function (e) {
+          const user = this.getAttribute('data-user');
+          openUserGallery(user);
+        });
+      });
+
+      // Open user gallery modal and populate thumbnails
+      function openUserGallery(user) {
+        const hidden = document.querySelector('.user-hidden-gallery[data-user="' + CSS.escape(user) + '"]');
+        const items = hidden ? Array.from(hidden.querySelectorAll('.gallery-item')) : [];
+        const gallery = document.getElementById('userGallery');
+        const title = document.getElementById('userGalleryTitle');
+
+        gallery.innerHTML = '';
+        title.textContent = user;
+
+        items.forEach((it, idx) => {
+        const type = it.getAttribute('data-type');
+        const src = it.getAttribute('data-src');
+        const download = it.getAttribute('data-download') || '';
+
+        if (type === 'image') {
+          const wrapper = document.createElement('div');
+          wrapper.style.position = 'relative';
+          wrapper.style.display = 'inline-block';
+
+          const thumb = document.createElement('img');
+          thumb.src = src;
+          thumb.alt = 'img-' + idx;
+          thumb.loading = 'lazy';
+          thumb.addEventListener('click', function () {
+            const modalImg = document.getElementById('modalImage');
+            modalImg.src = src;
+            const im = new bootstrap.Modal(document.getElementById('imageModal'));
+            im.show();
+          });
+
+          // ✅ clone CR tag from hidden gallery
+          const crTag = it.querySelector('.cr-tag');
+          if (crTag) {
+            const crClone = crTag.cloneNode(true);
+            crClone.setAttribute('onclick', 'fetchCRMetadata(this)');
+            wrapper.appendChild(crClone);
+          }
+
+          wrapper.appendChild(thumb);
+          gallery.appendChild(wrapper);
+
+        } else if (type === 'video') {
+          const wrapper = document.createElement('div');
+          wrapper.style.position = 'relative';
+          wrapper.style.width = '140px';
+          wrapper.style.height = '110px';
+
+          const vidThumb = document.createElement('video');
+          vidThumb.src = src;
+          vidThumb.muted = true;
+          vidThumb.playsInline = true;
+          vidThumb.style.width = '100%';
+          vidThumb.style.height = '100%';
+          vidThumb.style.objectFit = 'cover';
+          vidThumb.addEventListener('click', function () {
+            const source = document.getElementById('modalVideoSource');
+            source.src = src;
+            const vid = document.getElementById('modalVideo');
+            vid.load();
+            const vm = new bootstrap.Modal(document.getElementById('videoModal'));
+            vm.show();
+          });
+
+          // ✅ clone CR tag for videos
+          const crTag = it.querySelector('.cr-tag');
+          if (crTag) {
+            const crClone = crTag.cloneNode(true);
+            crClone.setAttribute('onclick', 'fetchCRMetadata(this)');
+            wrapper.appendChild(crClone);
+          }
+
+          const play = document.createElement('div');
+          play.innerHTML = '►';
+          play.style.position = 'absolute';
+          play.style.left = '50%';
+          play.style.top = '50%';
+          play.style.transform = 'translate(-50%,-50%)';
+          play.style.fontSize = '20px';
+          play.style.color = 'rgba(255,255,255,0.9)';
+          play.style.textShadow = '0 1px 4px rgba(0,0,0,0.5)';
+
+          wrapper.appendChild(vidThumb);
+          wrapper.appendChild(play);
+          gallery.appendChild(wrapper);
+        }
+      });
+
+        const modalEl = new bootstrap.Modal(document.getElementById('userGalleryModal'));
+        modalEl.show();
+      }
+
+      // Search filter (client-side)
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', function () {
+          const q = this.value.trim().toLowerCase();
+          document.querySelectorAll('.user-card').forEach(card => {
+            const user = (card.getAttribute('data-user') || '').toLowerCase();
+            // check if any hidden items filename matches too
+            const hidden = card.querySelectorAll('.hidden-item');
+            let match = user.includes(q);
+            if (!match && q !== '') {
+              hidden.forEach(h => {
+                const src = (h.getAttribute('data-src') || '').toLowerCase();
+                const filename = src.split('/').pop();
+                if (filename.includes(q)) match = true;
+              });
+            }
+            card.style.display = (q === '' || match) ? '' : 'none';
+          });
+        });
+      }
+
+      // Keep existing setImageHeight functionality for images inside old gallery rows (safe)
+      function setImageHeight() {
+        document.querySelectorAll(".gallery_row .img-card img").forEach(function (img) {
+          if (img.complete) {
+            img.style.height = img.clientWidth + "px";
+          } else {
+            img.onload = function () {
+              img.style.height = img.clientWidth + "px";
+            };
+          }
+        });
+      }
+      setImageHeight();
+      window.addEventListener("load", setImageHeight);
+    });
+
+    // CR metadata fetch / modal functions (kept unchanged)
+    function fetchCRMetadata(element) {
+      const fileUrl = element.getAttribute('data-file-url');
+      fetch(`/get_cr_metadata?file_url=${encodeURIComponent(fileUrl)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.data) {
+            const md = data.data;
+            const html = `
+              <div class="cr-metadata-header">Content Credentials</div>
+              <div class="cr-metadata-item"><strong>Creator Name</strong>${md.creator_name || '-'}</div>
+              <div class="cr-metadata-item"><strong>Title</strong>${md.title || '-'}</div>
+              <div class="cr-metadata-item"><strong>Description</strong>${md.description || '-'}</div>
+              <div class="cr-metadata-item"><strong>Creator Email</strong>${md.creator_email || '-'}</div>
+              <div class="cr-metadata-item"><strong>Copyright Notice</strong>${md.copyright_notice || '-'}</div>
+              <div class="cr-metadata-item"><strong>Creation Date</strong>${md.date_created || '-'}</div>
+            `;
+            document.getElementById('crMetadataContent').innerHTML = html;
+            document.getElementById('crMetadataModal').classList.add('show');
+          } else {
+            alert(data.message || "No metadata found.");
+          }
+        })
+        .catch(error => {
+          alert("Error fetching metadata.");
+          console.error(error);
+        });
+    }
+    function closeCRModal() {
+      document.getElementById('crMetadataModal').classList.remove('show');
+      document.getElementById('crMetadataContent').innerHTML = '';
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Meta Information -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Operations</title>
+
+  <!-- Favicons -->
+  <link href="assets/img/LTL-256.jpg" rel="icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+
+  <!-- Bootstrap JS (Required for dropdown functionality) -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Inline Custom Styles -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0px;
+      background-color: #f4f6f8;
+      color: #111516;
+    }
+
+    .subscription-container {
+      background: #e8eef3;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 0px;
+    }
+
+    .subscription-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 16px;
+      text-align: left;
+      background-color: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .subscription-table th,
+    .subscription-table td {
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+    }
+
+    .subscription-table th {
+      background-color: #9cc0df;
+      color: #483f3f;
+      font-weight: bold;
+    }
+
+    .subscription-table tr:nth-child(even) {
+      background-color: #f4f6f8;
+    }
+
+    .subscription-table tr:hover {
+      background-color: #e2e6ea;
+    }
+
+    .back-button {
+      margin-top: 20px;
+      background-color: #2089e7;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .back-button:hover {
+      background-color: #ffffff;
+    }
+
+    .approve-button {
+      background-color: #28a745;
+      color: #ffffff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .reject-button {
+      background-color: #dc3545;
+      color: #ffffff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .approve-button:hover {
+      background-color: #218838;
+      color: #ffffff;
+    }
+
+    .reject-button:hover {
+      background-color: #c82333;
+      color: #ffffff;
+    }
+  </style>
+</head>
+
+<body>
+  {% include 'header.html' %}
+  <div class="body-wrapper">
+
+    <div class="main">
+      <div class="subscription-container h-100 py-4 py-lg-5 px-0">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+              <div class="table-responsive">
+                <table class="subscription-table my-0">
+                  <thead>
+                    <tr>
+                      <th style="text-align: center;">Email</th>
+                      <th style="text-align: center;">Product Name</th>
+                      <th style="text-align: center;">Amount</th>
+                      <th style="text-align: center;">Subscription Date</th>
+                      <th style="text-align: center;">Refund Req. Date</th>
+                      <th style="text-align: center;">Refund Status</th>
+                      <th style="text-align: center;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for payment in payments %}
+                    <tr>
+                      <td style="text-align: center;">{{ payment.email }}</td>
+                      <td style="text-align: center;">{{ payment.product_name }}</td>
+                      <td style="text-align: center;">{{ payment.payment_amount }}</td>
+                      <td style="text-align: center;">{{ payment.payment_date }}</td>
+                      <td style="text-align: center;">{{ payment.refund_date }}</td>
+                      <td style="text-align: center;">{{ payment.refund_status }}</td>
+                      <td style="text-align: center;">
+                        <form action="/approve_refund" method="post" style="display: inline;">
+                          <input type="hidden" name="subscription_id" value="{{ payment.subscription_id }}">
+                          <input type="hidden" name="payment_id" value="{{ payment.payment_id }}">
+                          <button type="submit" class="btn action-button approve-button">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="14"
+                              height="14" fill="#ffffff">
+                              <path
+                                d="M22.319,4.431,8.5,18.249a1,1,0,0,1-1.417,0L1.739,12.9a1,1,0,0,0-1.417,0h0a1,1,0,0,0,0,1.417l5.346,5.345a3.008,3.008,0,0,0,4.25,0L23.736,5.847a1,1,0,0,0,0-1.416h0A1,1,0,0,0,22.319,4.431Z" />
+                            </svg>
+                            Approve
+                          </button>
+                        </form>
+
+                        <form action="/reject_refund" method="post" style="display: inline;">
+                          <input type="hidden" name="subscription_id" value="{{ payment.subscription_id }}">
+                          <input type="hidden" name="payment_id" value="{{ payment.payment_id }}">
+                          <button type="submit" class="btn action-button reject-button">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" id="Filled" viewBox="0 0 24 24" width="16"
+                              height="16" fill="#ffffff">
+                              <path
+                                d="M18,6h0a1,1,0,0,0-1.414,0L12,10.586,7.414,6A1,1,0,0,0,6,6H6A1,1,0,0,0,6,7.414L10.586,12,6,16.586A1,1,0,0,0,6,18H6a1,1,0,0,0,1.414,0L12,13.414,16.586,18A1,1,0,0,0,18,18h0a1,1,0,0,0,0-1.414L13.414,12,18,7.414A1,1,0,0,0,18,6Z" />
+                            </svg>
+                            Reject
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% include 'footer.html' %}
+
+  </div>
+
+  <script src="assets/js/footer-bot.js"></script>
+
+</body>
+
+
+</html>

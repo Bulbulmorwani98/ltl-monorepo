@@ -1,0 +1,32 @@
+services:
+  flask-app:
+    build: .
+    container_name: flask-app
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    command: ["python", "app.py"]
+
+  celery-worker:
+    build: .
+    container_name: celery-worker
+    restart: always
+    depends_on:
+      - flask-app
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    command: ["celery", "-A", "app.celery_app", "worker", "--loglevel=info"]
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"

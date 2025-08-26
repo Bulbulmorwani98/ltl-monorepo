@@ -1,0 +1,421 @@
+These are the programming notes for the Long Tailed Leopard implementation of C2PA.
+The base level plan is to have the ability to add the "don't index" flag to the meta data using C2PA.
+
+###########
+Need pip install flask[async] installed to use async
+
+###########
+
+Updated all the path names to use os.path.join so that it will logically format the same across OS'es.
+
+###########
+
+Docker cli commands:
+PS C:\Users\Brian the Red\GitHub\Video-Verify-Metadata> docker build -t video-verify-metadata .
+
+# launch shell, start app manually
+PS C:\Users\Brian the Red\GitHub\Video-Verify-Metadata> docker run -it -p 4000:80 video-verify-metadata /bin/bash
+
+# start app automatically
+docker run -p 4000:80 video-verify-metadata
+
+running files will drop them into tests/processed_files
+
+###########
+
+### Docker AWS Upload:
+
+1) Install AWS CLI: Ensure you have the AWS CLI installed and configured with your credentials.
+
+2) Create an ECR Repository: Create a repository in ECR to store your Docker image.
+
+3) Authenticate Docker to ECR: Use the AWS CLI to authenticate Docker to your ECR registry.
+
+4) Tag Your Docker Image: Tag your Docker image to match the ECR repository URI.
+
+5) Push the Docker Image: Push the tagged image to your ECR repository.
+
+
+### Detailed Steps:
+### Replace your-region with your AWS region (e.g., us-west-2) and your-account-id (e.g. 412343402708) with your AWS account ID.
+
+1. Install AWS CLI
+If you haven't installed the AWS CLI, you can download and install it.
+
+2. Create an ECR Repository
+aws ecr create-repository --repository-name video-verify-metadata --region us-west-2
+
+3. Authenticate Docker to ECR
+aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 412343402708.dkr.ecr.us-west-2.amazonaws.com
+
+4. Tag Your Docker Image
+docker tag video-verify-metadata:latest 412343402708.dkr.ecr.us-west-2.amazonaws.com/video-verify-metadata:latest
+
+5. Push the Docker Image
+docker push 412343402708.dkr.ecr.us-west-2.amazonaws.com/video-verify-metadata:latest
+
+Notes
+Ensure your AWS CLI is configured with the necessary permissions to create repositories and push images.
+Replace placeholders with your actual AWS account details and region.
+This will upload your Docker image to AWS ECR, making it available for deployment on AWS services like ECS or EKS.
+
+###########
+
+### ECS Setup
+
+1) Create cluster
+
+aws ecs create-cluster --cluster-name vv-metadata-initial-test
+
+2) Create and Attach an Execution Role
+    a) Create an IAM Role for ECS Tasks:
+
+    Go to the IAM console.
+    Click on "Roles" in the left navigation pane.
+    Click on the "Create role" button.
+    Select "ECS" as the service that will use this role.
+    Choose "ECS Task" as the use case.
+    Click "Next: Permissions".
+    Attach the AmazonECSTaskExecutionRolePolicy policy.
+    Click "Next: Tags" (optional) and then "Next: Review".
+    Give the role a name, e.g., ecsTaskExecutionRole.
+    Click "Create role".
+
+    b) Update Your Task Definition:
+
+    Add the executionRoleArn field to your task definition JSON.
+          "executionRoleArn": "arn:aws:iam::123456789012:role/ecsTaskExecutionRole",
+
+3) Create a Task Definition
+
+The task definition is located at infra/ecs/task-definition.json
+
+4) Register the task definition:
+
+aws ecs register-task-definition --cli-input-json file://infra/ecs/task-definition.json
+
+5) Run the task (services can be updated but you kill and restart tasks)
+
+Probably should remove "--enable-execute-command" before actually running this in production?  or lock down access and all.
+
+aws ecs run-task --cluster vv-metadata-initial-test --launch-type FARGATE --task-definition video-verify-metadata-task --network-configuration "awsvpcConfiguration={subnets=[subnet-aa7d85cd],securityGroups=[sg-5d879824],assignPublicIp=ENABLED}" --enable-execute-command
+(subnets here: https://us-west-2.console.aws.amazon.com/vpcconsole/home?region=us-west-2#subnets:)
+(Security Groups: https://us-west-2.console.aws.amazon.com/ec2/home?region=us-west-2#SecurityGroups:)
+
+############
+
+8/7/2024 - external IP - 54.244.59.69
+
+############
+
+IAM - ecsTaskExecutionRole - arn:aws:iam::412343402708:role/ecsTaskExecutionRole
+IAM - AWSServiceRoleForECS - arn:aws:iam::412343402708:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS
+
+#### Logging into an ECS container
+aws ecs execute-command --cluster vv-metadata-initial-test --task arn:aws:ecs:us-west-2:412343402708:cluster/vv-metadata-initial-test --container video-verify-metadata --interactive --command "/bin/sh"
+
+### Build/deploy processed_files 8/8/2024
+
+Local Build
+    * Build Docker
+    C:\Users\Brian the Red\GitHub\Video-Verify-Metadata> docker build -t video-verify-metadata .
+    * Remove Current Docker
+    * Run docker for check
+    docker run -p 4000:80 video-verify-metadata
+    serves on http://127.0.0.1:4000/metadata_modifier/
+
+Upload to AWS
+    * Tag docker
+    docker tag video-verify-metadata:latest 412343402708.dkr.ecr.us-west-2.amazonaws.com/video-verify-metadata:latest
+    * Push docker
+    docker push 412343402708.dkr.ecr.us-west-2.amazonaws.com/video-verify-metadata:latest
+        (if 403, it is probably cause you got logged out:
+        aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 412343402708.dkr.ecr.us-west-2.amazonaws.com)
+    * Register task definition (Need to do this to increment the build version and force a new deploy)
+    aws ecs register-task-definition --cli-input-json file://infra/ecs/task-definition.json
+    *  Kill task (if something is up and running)
+    https://us-west-2.console.aws.amazon.com/ecs/v2/clusters/vv-metadata-initial-test/tasks?region=us-west-2
+    * Run task
+    aws ecs run-task --cluster vv-metadata-initial-test --launch-type FARGATE --task-definition video-verify-metadata-task --network-configuration "awsvpcConfiguration={subnets=[subnet-aa7d85cd],securityGroups=[sg-5d879824],assignPublicIp=ENABLED}" --enable-execute-command
+    OR
+    * Run (update) Service:
+    aws ecs update-service --cluster vv-metadata-initial-test --service video-verify-metadata-service --task-definition video-verify-metadata-task
+
+Check serving 
+    Goto: https://us-west-2.console.aws.amazon.com/ecs/v2/clusters/vv-metadata-initial-test/tasks?region=us-west-2
+    Grab the task IP
+    Go to IP/metadata_modifier
+
+###############
+
+I have added a bunch of params and attempted to format them correctly reflecting both C2PA, CAI and IPTC .  
+https://www.iptc.org/std/photometadata/specification/IPTC-PhotoMetadata#ISO-XMP 
+https://creator-assertions.github.io/identity/1.0-draft/#_assertion_definition 
+https://c2pa.org/specifications/specifications/2.1/specs/C2PA_Specification.html#_embeddable_formats
+
+###############
+
+Setting up ltlprotect.com:
+
+To add CloudFront to your setup and use the domain name http://ltlprotect.com/, follow these steps:
+
+Step-by-Step Guide
+Register the Domain with Amazon Route 53:
+
+Register the domain ltlprotect.com using Amazon Route 53.
+Create a hosted zone for ltlprotect.com.
+Set Up Your Flask Application on EC2:
+
+Yes, it is generally a good practice to disable the public IP for your ECS Fargate tasks when using CloudFront. This enhances security by ensuring that your application is only accessible through CloudFront, which can provide additional security features such as DDoS protection and WAF (Web Application Firewall).
+
+Steps to Disable Public IP and Set Up CloudFront
+Update ECS Task Definition:
+
+Modify your ECS task definition to disable the public IP.
+Create an Application Load Balancer (ALB):
+
+Use an ALB to route traffic from CloudFront to your ECS tasks.
+Create a CloudFront Distribution:
+
+Set up CloudFront to use the ALB as the origin.
+Update Route 53 DNS Records:
+
+Point your domain to the CloudFront distribution.
+Detailed Steps
+1. Update ECS Task Definition
+Modify your ECS task definition to disable the public IP:
+
+2. Create an Application Load Balancer (ALB)
+Create an ALB:
+
+Go to the EC2 console.
+Under "Load Balancing", choose "Load Balancers" and click "Create Load Balancer".
+Choose "Application Load Balancer" and follow the prompts to create it.
+Configure the ALB:
+
+Set the ALB to listen on port 80 (HTTP) or 443 (HTTPS).
+Add your ECS tasks as targets in a target group.
+3. Create a CloudFront Distribution
+Go to the CloudFront Console:
+
+Open the Amazon CloudFront console.
+Create a New Distribution:
+
+Click "Create Distribution".
+Choose "Web" as the delivery method.
+Configure the Origin Settings:
+
+Set the "Origin Domain Name" to the DNS name of your ALB.
+Ensure the "Origin Protocol Policy" is set to "HTTP Only" or "HTTPS Only" based on your ALB configuration.
+Configure the Default Cache Behavior Settings:
+
+Set the "Viewer Protocol Policy" to "Redirect HTTP to HTTPS" or "HTTP and HTTPS" based on your requirements.
+Configure other settings as needed.
+Configure the Distribution Settings:
+
+Set the "Alternate Domain Names (CNAMEs)" to ltlprotect.com.
+If you have an SSL certificate for your domain, configure it under "SSL Certificate".
+Create the Distribution:
+
+Click "Create Distribution" and wait for it to deploy.
+4. Update Route 53 DNS Records
+Go to the Route 53 Console:
+
+Open the Amazon Route 53 console.
+Select the Hosted Zone for ltlprotect.com:
+
+Go to "Hosted Zones" and select ltlprotect.com.
+Create an A Record:
+
+Create an A record that points to the CloudFront distribution.
+Use an alias record to point to the CloudFront distribution.
+Summary
+By following these steps, you can disable the public IP for your ECS Fargate tasks and set up CloudFront to serve your Flask application using the domain http://ltlprotect.com/. This setup includes creating an ALB to route traffic to your ECS tasks, configuring CloudFront to use the ALB as the origin, and updating your Route 53 DNS records to point to the CloudFront distribution.
+
+############### Launch Service
+
+Setting up the ECS task/service and ALB (I didn't run this, I used the UI: https://us-west-2.console.aws.amazon.com/ecs/v2/clusters/vv-metadata-initial-test/run-task?region=us-west-2):
+
+9/13/2024 - Weirdly after updating docker, the version tagging seems off.  I had to force upload on version 16 when doing the deploy instead of seeing the version auto incremented.  I think someone changed with docker...
+
+aws ecs create-service \
+    --cluster vv-metadata-initial-test \
+    --service-name video-verify-metadata-service \
+    --task-definition video-verify-metadata-task \
+    --launch-type FARGATE \
+    --network-configuration "awsvpcConfiguration={subnets=[subnet-aa7d85cd],securityGroups=[sg-5d879824],assignPublicIp=DISABLED}" \
+    --desired-count 2 \
+    --load-balancers "targetGroupArn=arn:aws:elasticloadbalancing:region:account-id:targetgroup/target-group-name/target-group-id,containerName=container-name,containerPort=container-port" \
+    --enable-execute-command
+
+###############
+
+added a 1pv6 VPC to https://us-west-2.console.aws.amazon.com/vpcconsole/home?region=us-west-2#vpcs:
+subnet-aa7d85cd - added IPv6 and removed all public.
+
+Created https://us-west-2.console.aws.amazon.com/vpcconsole/home?region=us-west-2#NatGatewayDetails:natGatewayId=nat-04dd576cb3010d491 NAT Gateway - `https://us-west-2.console.aws.amazon.com/vpcconsole/home?region=us-west-2#NatGatewayDetails:natGatewayId=nat-04dd576cb3010d491`
+
+updated Routing table to point to new NAT gateway - https://us-west-2.console.aws.amazon.com/vpcconsole/home?region=us-west-2#RouteTableDetails:RouteTableId=rtb-50107837
+
+###############
+
+FYI, if you enable IPv6 and IPv4 check both of them for routing and other IP controls.
+
+###############
+
+C++ programs couldn't handle the space in my username so I moved vcpkg to C:\vcpkg rather than keep it in my GitHub directory
+https://github.com/microsoft/vcpkg?tab=readme-ov-file is the github... 
+
+############### Authorization through Cognito Section
+
+Setting up Cognito - 
+User Pool - https://us-west-2.console.aws.amazon.com/cognito/v2/idp/user-pools/us-west-2_IWlIeeKbY/messaging?region=us-west-2
+
+Awaiting SES authorization - https://us-west-2.console.aws.amazon.com/ses/home?region=us-west-2#/get-set-up (if I want to use my own auth, will need this)
+
+Probably did the email correct (customer_service@longtailedleopard.com) and SES set up on mail.longtailedleopard.com.
+On the google side customer_service@longtailedleopard.com is set up as an alias for admin@longtailedleopard.com
+Set up dkim for both google and amazon on longtailedleopard.com.  This is done in the squarespace DNS configuration.
+Need to discard a bunch of that email stuff until I am ready to have authentication exist within the app, which implies the ability to be sure a person is who they claim they are.
+
+Set up Federated User from Google, need to do the others:
+https://console.cloud.google.com/apis/credentials?project=ltl-identity-management&supportedpurview=project
+https://console.cloud.google.com/apis/credentials?project=ltl-identity-management&supportedpurview=project&rapt=AEjHL4NGnMV15gaAnkLPfl6KaRv7HtiriwAsZinoIRfV0VZN14dLKGlbS-faitp-r__rV1qBiIxzWQ9EeCurMm7z9tQid1W4SfiGGjJI_ovQTruPXk8-bGU
+Got the client ID and secret from the download link on that page
+
+Amazon (same sort of stuff as Google) 
+https://developer.amazon.com/settings/console/securityprofile/web-settings/view.html?showDeleted=false&identityAppFamilyId=amzn1.application.9fb6dd8ed19f4537a51baafec4283dd9
+
+Apple - 
+
+After setting up Hosted UI, needed to make sure to set up a CNMAE record in route 53.  The redirect value comes from the hosted UI area in amazon - 
+(alias taget on this page): https://us-west-2.console.aws.amazon.com/cognito/v2/idp/user-pools/us-west-2_TL6iUToI5/app-integration?region=us-west-2
+
+###############
+
+In ACM, I have a cert for www.ltlprotect.com and a cert for *.ltlprotect.com.  The wildcard cert is used for auth.ltlprotect.com currently, but should retire the www cert and move everything under the wildcard.
+
+###############
+
+Auth link:
+https://auth.ltlprotect.com/login?response_type=code&client_id=1hql3hri03m87c316o812uvnius&redirect_uri=https://ltlprotect.com/metadata_modifier/
+
+###############
+
+Because the user pool didn't set as a default: openid, and email, those can't be required and adding another required parameter means that the user pool will need to be recreated.
+Want to require: profile, email.  Apple only allows name & email.  
+Set up openID and email as the only required values.
+
+###############
+Google Identity Docs: https://developers.google.com/identity/openid-connect/openid-connect#php_1
+Apple Identity Docs: https://developer.apple.com/documentation/sign_in_with_apple/clientconfigi/3230955-scope
+Amazon Identity Docs: https://docs.aws.amazon.com/connect/latest/adminguide/connect-security-profiles.html
+
+############### End of Authorization Section
+
+
+############### Metered Billing through Stripe:
+
+If it's a metered billing you want to implement, you would have to first create your product or service:
+https://stripe.com/docs/api/prices/create
+And then record your usage:
+https://stripe.com/docs/api/usage_records/create
+Finally, you'll need to report the usage as a ‘usage_record’ on the customer's ‘subscription_item’:
+https://stripe.com/docs/billing/subscriptions/metered-billing#reporting-usage
+Everything is outlined here:
+https://stripe.com/docs/billing/subscriptions/metered-billing
+
+############### Billing End
+
+############### RDS Postgres SQl Database for LTL Protect
+https://us-west-2.console.aws.amazon.com/rds/home?region=us-west-2#database:id=ltl-protect-db-cluster-instance-1;is-cluster=false
+
+Currently publicly accessible, should only be reached through my IP, but will not want to keep that that way, probably want it all on a separate VPC...
+
+endpoint - ltl-protect-db-cluster-instance-1.c2fmhkpbjeji.us-west-2.rds.amazonaws.com
+port 5432
+
+The configuration is already set up in the sql extension.
+
+############### End Database
+
+If you do @stripe in copilot, you can ask stripe's AI what to do about stuff.
+
+###############  LTLProtect Page Flow
+
+Logical Flow
+Land (www.ltlprotect.com) -> auth (auth.ltlprotect.com) -> ltlprotect.com/metadata_modifier -> stripe payment page.
+
+###############
+
+I manually updated the settings.json to make vscode be able to find python:
+    "terminal.integrated.env.windows": {
+        "PATH": "C:\\Users\\Brian the Red\\AppData\\Local\\Programs\\Python\\Python312\\Scripts;${env:PATH}"
+    },
+The path outside of the terminal doesn't have this set so... 
+
+###############
+
+I manually added the cognito secret to Video-Verify-Metadata.code-workspace.
+
+###############
+DB reset and update:
+SQL to drop tables:
+
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+
+
+DB set up and roll back - using SQL Alchemy and alembic you can (from \Video-Verify-Metadata\app> flask db upgrade):
+Get the history of DB updates (all for the app folder):
+    flask db history 
+Do and database update based what is the most recent migration data
+    flask db upgrade
+Do a downgraed based on what was in the most recent migration data
+    flask db downgrade
+
+###############
+
+Celery
+
+After running the app on the same directory, you need to run the Celery command in another terminal.
+
+Here is the command:
+celery -A app.celery_app worker --loglevel=info
+
+############### docker compose update:
+
+I've added the docker-compose.yml file, making it easy to run all services with a single command:
+
+To start the services:
+docker-compose up --build
+To run in the background:
+docker-compose up -d --build
+Note: Inside the Docker container:
+
+The Flask app runs on port 80
+Redis runs on port 6379
+If these ports are already in use on your system, you can modify them in the docker-compose.yml file as needed.
+
+############### Prod Bulid 4-8-2025
+
+# Build docker
+docker-compose up -d --build
+
+# Tag Build
+docker tag video-verify-metadata:latest 412343402708.dkr.ecr.us-west-2.amazonaws.com/video-verify-metadata:latest
+
+# login
+aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 412343402708.dkr.ecr.us-west-2.amazonaws.com
+
+# push tagged docker
+docker push 412343402708.dkr.ecr.us-west-2.amazonaws.com/video-verify-metadata:latest
+
+# update task definition (if it changed)
+aws ecs register-task-definition --cli-input-json file://infra/ecs/task-definition.json
+
+# update service
+aws ecs update-service --cluster vv-metadata-initial-test --service video-verify-metadata-service --task-definition video-verify-metadata-task
+
+# start service
+aws ecs create-service --cluster vv-metadata-initial-test --service-name video-verify-metadata-service --task-definition video-verify-metadata-task --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=[subnet-aa7d85cd],securityGroups=[sg-5d879824],assignPublicIp=ENABLED}" --desired-count 1

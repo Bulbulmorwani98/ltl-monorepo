@@ -1,0 +1,120 @@
+{
+	"family": "video-verify-metadata-task",
+	"networkMode": "awsvpc",
+	"executionRoleArn": "arn:aws:iam::412343402708:role/ecsTaskExecutionRole",
+	"taskRoleArn": "arn:aws:iam::412343402708:role/ecsTaskExecutionRole",
+	"containerDefinitions": [
+	  {
+		"name": "flask-app",
+		"image": "412343402708.dkr.ecr.us-west-2.amazonaws.com/video-verify-metadata:flask-app",
+		"essential": true,
+		"memory": 1024,
+		"cpu": 512,
+		"portMappings": [
+		  {
+			"containerPort": 80,
+			"hostPort": 80,
+			"protocol": "tcp"
+		  }
+		],
+		"logConfiguration": {
+		  "logDriver": "awslogs",
+		  "options": {
+			"awslogs-group": "/ecs/video-verify-metadata",
+			"awslogs-region": "us-west-2",
+			"awslogs-stream-prefix": "flask",
+			"awslogs-create-group": "true"
+		  }
+		},
+		"environment": [
+		  {
+			"name": "ENV",
+			"value": "prod"
+		  },
+		  {
+			"name": "CELERY_BROKER_URL",
+			"value": "redis://localhost:6379/0"
+		  },
+		  {
+			"name": "CELERY_RESULT_BACKEND",
+			"value": "redis://localhost:6379/0"
+		  }
+		],
+		"dependsOn": [
+		  {
+			"containerName": "redis",
+			"condition": "START"
+		  }
+		]
+	  },
+	  {
+		"name": "celery-worker",
+		"image": "412343402708.dkr.ecr.us-west-2.amazonaws.com/video-verify-metadata:celery-worker",
+		"essential": false,
+		"memory": 1024,
+		"cpu": 512,
+		"command": ["celery", "-A", "app.celery_app", "worker", "--loglevel=info"],
+		"logConfiguration": {
+		  "logDriver": "awslogs",
+		  "options": {
+			"awslogs-group": "/ecs/video-verify-metadata",
+			"awslogs-region": "us-west-2",
+			"awslogs-stream-prefix": "celery",
+			"awslogs-create-group": "true"
+		  }
+		},
+		"environment": [
+		  {
+			"name": "ENV",
+			"value": "prod"
+		},
+		  {
+			"name": "CELERY_BROKER_URL",
+			"value": "redis://localhost:6379/0"
+		  },
+		  {
+			"name": "CELERY_RESULT_BACKEND",
+			"value": "redis://localhost:6379/0"
+		  }
+		],
+		"dependsOn": [
+		  {
+			"containerName": "redis",
+			"condition": "START"
+		  },
+		  {
+			"containerName": "flask-app",
+			"condition": "START"
+		  }
+		]
+	  },
+	  {
+		"name": "redis",
+		"image": "412343402708.dkr.ecr.us-west-2.amazonaws.com/video-verify-metadata:redis",
+		"essential": true,
+		"memory": 512,
+		"cpu": 256,
+		"portMappings": [
+		  {
+			"containerPort": 6379,
+			"hostPort": 6379,
+			"protocol": "tcp"
+		  }
+		],
+		"logConfiguration": {
+		  "logDriver": "awslogs",
+		  "options": {
+			"awslogs-group": "/ecs/video-verify-metadata",
+			"awslogs-region": "us-west-2",
+			"awslogs-stream-prefix": "redis",
+			"awslogs-create-group": "true"
+		  }
+		}
+	  }
+	],
+	"requiresCompatibilities": [
+	  "FARGATE"
+	],
+	"cpu": "2048",
+	"memory": "4096"
+  }

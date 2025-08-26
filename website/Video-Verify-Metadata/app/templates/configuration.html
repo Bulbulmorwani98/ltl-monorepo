@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Configure</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="assets/img/LTL-256.jpg" rel="icon">
+
+  <!-- Favicons -->
+  <!-- <link href="assets/img/favicon.png" rel="icon">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon"> -->
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+
+  <!-- =======================================================
+    * Template Name: Active
+    * Template URL: https://bootstrapmade.com/active-bootstrap-website-template/
+    * Updated: Aug 07 2024 with Bootstrap v5.3.3
+    * Author: BootstrapMade.com
+    * License: https://bootstrapmade.com/license/
+    ======================================================== -->
+
+</head>
+
+<body class="index-page">
+  {% include 'header.html' %}
+  
+  <div class="body-wrapper">
+    <main class="main">
+
+      <section class="section">
+        <div class="container">
+          <form action="/configuration_details" method="POST" enctype="multipart/form-data" class="creator-form">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>File Creator Name</label>
+                    <input 
+                      type="text" 
+                      placeholder="Creator Name" 
+                      id="creatorName" 
+                      name="creatorName"
+                      class="form-control" 
+                      required 
+                      pattern="[A-Za-z\s]+"
+                      title="Only letters and spaces allowed"
+                      oninvalid="this.setCustomValidity('Please enter only letters and spaces.')"
+                      oninput="this.setCustomValidity('')"
+                      value="{{ meta_info.get('creator_name') or '' }}" />
+                    <small id="creatorNameError" class="text-danger d-none">
+                      Please enter only letters and spaces.
+                    </small>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Creator's Address</label>
+                    <input type="text" placeholder="Address" id="creatorAddress" name="creatorAddress"
+                      class="form-control" value="{{ meta_info.get('creator_address') or '' }}" />
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>City of the Creator</label>
+                    <input 
+                      type="text"
+                      placeholder="City"
+                      id="creatorCity"
+                      name="creatorCity"
+                      class="form-control"
+                      pattern="[A-Za-z\s]+"
+                      data-error="creatorCityError"
+                      value="{{ meta_info.get('creator_city') | replace('None', '') | default('', true) }}" />
+                    <small id="creatorCityError" class="text-danger d-none">
+                      Please enter only letters and spaces.
+                    </small>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>State of the Creator</label>
+                    <input 
+                        type="text"
+                        placeholder="State"
+                        id="creatorState"
+                        name="creatorState"
+                        class="form-control"
+                        pattern="[A-Za-z\s]+"
+                        data-error="creatorStateError"
+                        oninvalid="this.setCustomValidity('Please enter only alphabets and spaces.')"
+                        oninput="this.setCustomValidity('')"
+                        value="{{meta_info.get('creator_state') | replace('None', '') | default('', true) }}" />
+                    <small id="creatorStateError" class="text-danger d-none">Please enter only letters and spaces.</small>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Country of the Creator</label>
+                    <input 
+                        type="text"
+                        placeholder="Country"
+                        id="creatorCountry"
+                        name="creatorCountry"
+                        class="form-control"
+                        pattern="[A-Za-z\s]+"
+                        data-error="creatorCountryError"
+                        oninvalid="this.setCustomValidity('Please enter only alphabets and spaces.')"
+                        oninput="this.setCustomValidity('')"
+                        value="{{meta_info.get('creator_country') | replace('None', '') | default('', true) }}" />
+                    <small id="creatorCountryError" class="text-danger d-none">Please enter only letters and spaces.</small>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Postal code of the Creator</label>
+                    <input 
+                        type="text"
+                        placeholder="Postal code"
+                        id="creatorPostalCode"
+                        name="creatorPostalCode"
+                        class="form-control"
+                        pattern="^$|^\d+$"
+                        data-error="creatorPostalCodeError"
+                        value="{{ meta_info.get('creator_postal_code') or '' }}" />
+                    <small id="postalCodeError" class="text-danger d-none">
+                      Please enter digits only.
+                    </small>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Email of the Creator</label>
+                    <input type="email"
+                        placeholder="Email"
+                        id="creatorEmail"
+                        name="creatorEmail"
+                        class="form-control"
+                        required
+                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                        title="Enter a valid email like user@example.com"
+                        oninput="this.setCustomValidity('')"
+                        oninvalid="showEmailError()"
+                        value="{{meta_info.get('creator_email') or '' }}" />
+                    <!-- Error message -->
+                    <small id="emailError" class="text-danger d-none">Please enter a valid email address.</small>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Phone number of the Creator</label>
+                    <input 
+                        type="text"
+                        placeholder="Phone number"
+                        id="creatorPhone"
+                        name="creatorPhone"
+                        class="form-control"
+                        pattern="^$|^None$|^(\+?\d{1,3}[\s-]?)?(\(?\d{2,4}\)?[\s-]?)?(\d{3,4}[\s-]?){1,3}$"
+                        value="{{ meta_info.get('creator_phone') or '' }}" />
+                    <small id="phoneError" class="text-danger d-none">
+                      Please enter a valid 10-digit phone number.
+                    </small>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Web URL of the Creator</label>
+                    <input type="text"
+                        placeholder="Web URL"
+                        id="creatorWebUrl"
+                        name="creatorWebUrl"
+                        class="form-control"
+                        pattern="^$|https?://(?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,6}(?:/[\w.-]*)*$"
+                        title="Please enter a valid URL, like http://www.example.com"
+                        oninvalid="document.getElementById('urlError').classList.remove('d-none')"
+                        oninput="document.getElementById('urlError').classList.add('d-none')"
+                        value="{{meta_info.get('creator_web_url') | replace('None', '') | default('', true) }}" />
+                    <small id="urlError" class="text-danger d-none">Please enter a valid URL, like http://www.example.com</small>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Job title of the Creator</label>
+                    <input type="text"
+                        placeholder="Job Title"
+                        id="creatorJobTitle"
+                        name="creatorJobTitle"
+                        class="form-control"
+                        pattern="[A-Za-z\s]+"
+                        title="Only alphabets and spaces allowed"
+                        oninvalid="this.setCustomValidity('Please enter only alphabets and spaces.')"
+                        oninput="this.setCustomValidity('')"
+                        value="{{meta_info.get('creators_jobtitle') | replace('None', '') | default('', true) }}" />
+                    <small id="creatorJobTitleError" class="text-danger d-none">Please enter only letters and spaces.</small>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Credit line</label>
+                    <input type="text"
+                        placeholder="Credit line"
+                        id="creditLine"
+                        name="creditLine"
+                        class="form-control"
+                        title="Enter credit line"
+                        oninput="this.setCustomValidity('')"
+                        value="{{meta_info.get('credit_line') | replace('None', '') | default('', true) }}" />
+                    <small id="creditLineError" class="text-danger d-none">Please enter credit line.</small>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Date created</label>
+                    <input type="date" placeholder="Date Created" id="dateCreated" name="dateCreated"
+                      class="form-control" value="{{meta_info.get('date_created') or '' }}" />
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Copyright Notice for the file</label>
+                    <input type="text" placeholder="Copyright Notice" id="copyrightNotice" name="copyrightNotice"
+                      class="form-control" value="{{meta_info.get('copyright_notice') or '' }}" />
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Description of the writer</label>
+                    <input type="text"
+                        placeholder="Description_of_the_writer"
+                        id="descriptionWriter"
+                        name="descriptionWriter"
+                        class="form-control"
+                        title="Enter description writer"
+                        oninput="this.setCustomValidity('')" 
+                        value="{{meta_info.get('description_writer') | replace('None', '') | default('', true) }}" />
+                    <small id="descriptionWriterError" class="text-danger d-none">Please enter description writer.</small>
+                  </div>
+                </div>
+
+                <div class="col-md-12 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Headline</label>
+                    <input type="text"
+                        placeholder="Headline"
+                        id="headline"
+                        name="headline"
+                        class="form-control"
+                        title="Enter headline"
+                        oninput="this.setCustomValidity('')"
+                        value="{{meta_info.get('headline') | replace('None', '') | default('', true) }}" />
+                    <small id="headlineError" class="text-danger d-none">Please enter headline.</small>
+                  </div>
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Rights usage terms</label>
+                    <textarea placeholder="Rights usage terms" id="rightsUsageTerms" name="rightsTerms"
+                      class="form-control" >{{ meta_info.get('rights_usage_terms') or '' }}</textarea>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label for="description">Description</label>
+                    <textarea 
+                      placeholder="Description"
+                      id="description"
+                      name="description"
+                      class="form-control"
+                      required
+                      oninput="this.setCustomValidity('')">{{ meta_info.get('description') or '' }}</textarea>
+                    <small id="descriptionError" class="text-danger d-none">Please enter description.</small>
+                  </div>
+                </div>
+
+                <div class="col-md-12 mb-3">
+                  <div class="form-group mb-0">
+                    <label for="instructions">Instructions</label>
+                    <textarea 
+                      placeholder="Instructions"
+                      id="instructions"
+                      name="instructions"
+                      class="form-control"
+                      oninput="this.setCustomValidity('')">{{ meta_info.get('instructions') | replace('None', '') | default('', true) }}</textarea>
+                    <small id="instructionsError" class="text-danger d-none">Please enter instructions.</small>
+                  </div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Keywords</label>
+                    <input 
+                        type="text"
+                        placeholder="Keywords"
+                        id="keywords"
+                        name="keywords"
+                        class="form-control"
+                        title="Enter keywords"
+                        oninput="this.setCustomValidity('')"
+                        value="{{meta_info.get('keywords') | replace('None', '') | default('', true) }}" />
+                    <small id="keywordsError" class="text-danger d-none">Please enter keywords.</small>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Title</label>
+                    <input type="text"
+                        placeholder="Title"
+                        id="title"
+                        name="title"
+                        class="form-control"
+                        required
+                        title="Enter title"
+                        oninput="this.setCustomValidity('')"
+                        value="{{meta_info.get('title') or '' }}" />
+                    <small id="titleError" class="text-danger d-none">Please enter title.</small>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>AI Training</label>
+                    <select id="aiTraining" class="form-control" name="aiTraining">
+                      <option value="" disabled selected>Select an option</option>
+                      <option value="allowed" {% if meta_info.get('ai_training') == 'allowed' %}selected{% endif %}>Allowed</option>
+                      <option value="notAllowed" {% if meta_info.get('ai_training') == 'notAllowed' %}selected{% endif %}>Not Allowed</option>
+                      <option value="constrained" {% if meta_info.get('ai_training') == 'constrained' %}selected{% endif %}>Constrained</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>AI Generative Training</label>
+                    <select id="aiGenerativeTraining" name="aiGenerativeTraining" class="form-control">
+                      <option value="" disabled selected>Select an option</option>
+                      <option value="allowed" {% if meta_info.get('ai_training') == 'allowed' %}selected{% endif %}>Allowed</option>
+                      <option value="notAllowed" {% if meta_info.get('ai_training') == 'notAllowed' %}selected{% endif %}>Not Allowed</option>
+                      <option value="constrained" {% if meta_info.get('ai_training') == 'constrained' %}selected{% endif %}>Constrained</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>Data Mining</label>
+                    <select id="dataMining" name="dataMining" class="form-control">
+                      <option value="" disabled selected>Select an option</option>
+                      <option value="allowed" {% if meta_info.get('ai_training') == 'allowed' %}selected{% endif %}>Allowed</option>
+                      <option value="notAllowed" {% if meta_info.get('ai_training') == 'notAllowed' %}selected{% endif %}>Not Allowed</option>
+                      <option value="constrained" {% if meta_info.get('ai_training') == 'constrained' %}selected{% endif %}>Constrained</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <div class="form-group mb-0">
+                    <label>AI Inference</label>
+                    <select id="aiInference" name="aiInference" class="form-control">
+                      <option value="" disabled selected>Select an option</option>
+                      <option value="allowed" {% if meta_info.get('ai_training') == 'allowed' %}selected{% endif %}>Allowed</option>
+                      <option value="notAllowed" {% if meta_info.get('ai_training') == 'notAllowed' %}selected{% endif %}>Not Allowed</option>
+                      <option value="constrained" {% if meta_info.get('ai_training') == 'constrained' %}selected{% endif %}>Constrained</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-md-12 mb-3 text-end">
+                  <a href="/metadata_modifier" class="btn btn-site rounded-pill" style="min-width: 200px;">Back</a>
+                  <button type="submit" class="btn btn-site rounded-pill" style="min-width: 200px;">Save</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+    {% include 'footer.html' %}
+  </div>
+
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/footer-bot.js"></script>
+
+  <script>
+    const defaultValues = {
+      creatorName: 'John Doe',
+      creatorAddress: '123 Main St',
+      creatorCity: 'Anytown',
+      creatorState: 'CA',
+      creatorCountry: 'USA',
+      creatorPostalCode: '12345',
+      creatorEmail: 'johndoe@example.com',
+      creatorPhone: '555-1234',
+      creatorWebUrl: 'http://example.com',
+      creatorsJobtitle: 'Photographer',
+      creditLine: 'John Doe Photography',
+      dateCreated: '2024-08-30',
+      copyrightNotice: '© 2024 John Doe',
+      rightsUsageTerms: 'All rights reserved',
+      description: 'A beautiful sunset over the mountains.',
+      descriptionWriter: 'John Doe',
+      headline: 'Sunset Over Mountains',
+      instructions: 'Handle with care',
+      keywords: 'sunset, mountains, nature',
+      title: 'Sunset Over Mountains',
+      aiTraining: 'notAllowed',
+      aiGenerativeTraining: 'notAllowed',
+      dataMining: 'notAllowed',
+      aiInference: 'notAllowed',
+    };
+
+    function populateDefaultValues() {
+      for (const [key, value] of Object.entries(defaultValues)) {
+        const field = document.getElementById(key);
+        if (field) {
+          if (field.tagName === 'INPUT' || field.tagName === 'TEXTAREA') {
+            field.value = value;
+          } else if (field.tagName === 'SELECT') {
+            field.value = value;
+          }
+        }
+      }
+    }
+
+    function showFileNames() {
+      const input = document.getElementById('fileInput');
+      const fileNameDisplay = document.getElementById('fileName');
+
+      if (input.files.length > 0) {
+        fileNameDisplay.innerHTML = "<strong>Selected Files:</strong><br>" +
+          Array.from(input.files).map(file => file.name).join("<br>");
+      } else {
+        fileNameDisplay.innerHTML = ""; // Clear if no files selected
+      }
+    }
+  </script>
+
+<script>
+  const phoneInput = document.getElementById("creatorPhone");
+  const phoneError = document.getElementById("phoneError");
+
+  // Use same regex as in pattern attribute
+  const phoneRegex = /^$|^None$|^(\+?\d{1,3}[\s-]?)?(\(?\d{2,4}\)?[\s-]?)?(\d{3,4}[\s-]?){1,3}$/;
+
+  document.querySelector("form").addEventListener("submit", function(e) {
+    if (phoneInput.value && !phoneRegex.test(phoneInput.value)) {
+      phoneError.textContent = "Please enter a valid phone number (with optional +country code).";
+      phoneError.classList.remove("d-none");
+      e.preventDefault();
+    } else {
+      phoneError.classList.add("d-none");
+    }
+  });
+</script>
+
+
+<!-- Main JavaScript File -->
+<script src="assets/js/validation.js"></script>
+
+</body>
+
+</html>
